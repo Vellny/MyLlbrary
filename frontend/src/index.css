@@ -1,0 +1,100 @@
+:root {
+  /* Typography */
+  --font-primary: 'Outfit', 'Inter', system-ui, Avenir, Helvetica, Arial, sans-serif;
+  --font-reading: 'Merriweather', 'Georgia', serif;
+  
+  /* Color Palette - Dark Premium (Glassmorphism inspired) */
+  --bg-main: #0f172a;
+  --bg-surface: #1e293b;
+  --bg-surface-hover: #334155;
+  --bg-glass: rgba(30, 41, 59, 0.7);
+  --bg-glass-border: rgba(255, 255, 255, 0.1);
+  
+  /* Accent Colors (Vibrant gradient feeling) */
+  --accent-primary: #f43f5e; /* Rose / Red-pink for a Fizzo-like vibe */
+  --accent-hover: #e11d48;
+  --accent-secondary: #8b5cf6;
+  
+  /* Text Colors */
+  --text-primary: #f8fafc;
+  --text-secondary: #94a3b8;
+  --text-muted: #64748b;
+  
+  /* Spacing & Borders */
+  --radius-sm: 8px;
+  --radius-md: 12px;
+  --radius-lg: 20px;
+  --radius-full: 9999px;
+  
+  font-family: var(--font-primary);
+  line-height: 1.5;
+  font-weight: 400;
+
+  color-scheme: dark;
+  color: var(--text-primary);
+  background-color: var(--bg-main);
+
+  font-synthesis: none;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  min-width: 320px;
+  min-height: 100vh;
+  overflow-x: hidden;
+  background: var(--bg-main);
+  /* Optional subtle background gradient */
+  background-image: radial-gradient(circle at top right, rgba(139, 92, 246, 0.05), transparent 40%),
+                    radial-gradient(circle at bottom left, rgba(244, 63, 94, 0.05), transparent 40%);
+  background-attachment: fixed;
+}
+
+#root {
+  width: 100%;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+a {
+  font-weight: 500;
+  color: var(--accent-primary);
+  text-decoration: none;
+  transition: color 0.2s ease;
+}
+
+a:hover {
+  color: var(--accent-hover);
+}
+
+button {
+  cursor: pointer;
+  font-family: var(--font-primary);
+  border: none;
+  outline: none;
+  background: none;
+}
+
+/* Utilities */
+.glass-panel {
+  background: var(--bg-glass);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid var(--bg-glass-border);
+}
+
+.text-gradient {
+  background: linear-gradient(135deg, var(--accent-primary), var(--accent-secondary));
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
