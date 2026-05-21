@@ -31,6 +31,7 @@ export interface Book {
   tags: string[];
   stats: BookStats;
   chaptersList: ChapterListItem[];
+  isCollaborative?: boolean;
 }
 
 export interface BookSummary {

@@ -194,6 +194,8 @@ export default function BookDetail() {
   };
 
   const isUserBook = isUserAuthoredBook(bookId);
+  const isCollaborativeBook = !!book.isCollaborative;
+  const canAddChapters = isUserBook || isCollaborativeBook;
 
   return (
     <div className="book-detail-page">
@@ -208,7 +210,14 @@ export default function BookDetail() {
         <div className="main-info">
           <img src={book.coverImage} alt={book.title} className="detail-cover" />
           <div className="info-text">
-            <h1 className="detail-title">{book.title}</h1>
+            <h1 className="detail-title">
+              {book.title}
+              {isCollaborativeBook && (
+                <span className="collaboration-badge" title="Co-writing is open! Any registered user can add chapters to this community novel.">
+                  👥 Open Collaboration
+                </span>
+              )}
+            </h1>
             <p className="detail-author">{book.author}</p>
 
             <div className="detail-stats glass-panel">
@@ -233,11 +242,11 @@ export default function BookDetail() {
                 <Link to={`/read/${book.chaptersList[0].id}`} className="primary-btn read-full-btn">
                   Start Reading
                 </Link>
-              ) : (
+              ) : canAddChapters ? (
                 <button onClick={() => setShowAddChapter(true)} className="primary-btn read-full-btn">
                   ✍️ Write Your First Chapter
                 </button>
-              )}
+              ) : null}
               <button className="secondary-btn glass-panel">
                 <span className="nav-icon">➕</span> Add to Library
               </button>
@@ -265,7 +274,7 @@ export default function BookDetail() {
             <div className="chapters-header">
               <h2 className="section-title">Chapters ({book.stats.chapters})</h2>
               <div className="chapters-header-actions">
-                {isUserBook && (
+                {canAddChapters && (
                   <button 
                     onClick={() => setShowAddChapter(true)} 
                     className="add-chap-btn"

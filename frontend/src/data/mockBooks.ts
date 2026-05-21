@@ -34,7 +34,8 @@ export const mockBooksDict: Record<string, Book> = {
       { id: '1_c1', title: 'Chapter 1: The Night of Silver Rain', date: '2 hours ago', read: true },
       { id: '1_c2', title: 'Chapter 2: Shards of Silence', date: '1 hour ago', read: false },
       { id: '1_c3', title: 'Chapter 3: The Gilded Cage', date: '30 mins ago', read: false },
-    ]
+    ],
+    isCollaborative: true
   },
   '2': {
     id: '2',
@@ -61,8 +62,9 @@ export const mockBooksDict: Record<string, Book> = {
     chaptersList: [
       { id: '3_c1', title: 'Chapter 1: The Sunken City', date: '3 days ago', read: false },
       { id: '3_c2', title: 'Chapter 2: The Whispering Monoliths', date: '2 days ago', read: false },
-      { id: '3_c3', title: 'Chapter 3: Eyes in the Deep', date: '5 hours ago', read: false },
-    ]
+      { id: '3_c3', title: 'Eyes in the Deep', date: '5 hours ago', read: false },
+    ],
+    isCollaborative: true
   },
   '4': {
     id: '4',
@@ -106,4 +108,6 @@ export const bookTitles: Record<string, string> = {
 export const MOCK_BOOK_IDS = ['1', '2', '3', '4', '5'];
 
 /** Check if a book ID belongs to a user-authored book (not a built-in mock) */
-export const isUserAuthoredBook = (_bookId: string): boolean => true;
+export const isUserAuthoredBook = (bookId: string): boolean => {
+  return !MOCK_BOOK_IDS.includes(bookId);
+};
