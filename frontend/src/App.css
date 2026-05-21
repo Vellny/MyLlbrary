@@ -2,13 +2,13 @@
   flex: 1;
   width: 100%;
   /* Padding for desktop top nav */
-  padding-top: 60px; 
+  padding-top: var(--nav-height); 
 }
 
 @media (max-width: 768px) {
   .main-content {
     /* Padding for mobile top (if any) and bottom nav */
     padding-top: 0;
-    padding-bottom: 70px; /* Space for bottom nav */
+    padding-bottom: var(--nav-height-mobile); /* Space for bottom nav */
   }
 }

@@ -1,5 +1,7 @@
-import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
+import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import { AuthProvider } from './context/AuthContext';
+import ErrorBoundary from './components/ErrorBoundary';
+import ProtectedRoute from './components/ProtectedRoute';
 import LoginPage from './components/LoginPage';
 import RegisterPage from './components/RegisterPage';
 import Navigation from './components/Navigation';
@@ -7,6 +9,8 @@ import Discover from './components/Discover.tsx';
 import Bookshelf from './components/Bookshelf.tsx';
 import BookDetail from './components/BookDetail.tsx';
 import Reader from './components/Reader.tsx';
+import ProfilePage from './components/ProfilePage.tsx';
+import CreateBook from './components/CreateBook.tsx';
 import './App.css';
 
 function AppRoutes() {
@@ -21,7 +25,12 @@ function AppRoutes() {
           <Route path="/read/:chapterId" element={<Reader />} />
           <Route path="/login" element={<LoginPage />} />
           <Route path="/register" element={<RegisterPage />} />
-          <Route path="/dashboard" element={<Navigate to="/" />} />
+          <Route path="/profile" element={
+            <ProtectedRoute><ProfilePage /></ProtectedRoute>
+          } />
+          <Route path="/create-novel" element={
+            <ProtectedRoute><CreateBook /></ProtectedRoute>
+          } />
         </Routes>
       </main>
     </>
@@ -32,7 +41,9 @@ function App() {
   return (
     <Router>
       <AuthProvider>
-        <AppRoutes />
+        <ErrorBoundary>
+          <AppRoutes />
+        </ErrorBoundary>
       </AuthProvider>
     </Router>
   );

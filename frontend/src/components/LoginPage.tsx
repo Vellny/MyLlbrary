@@ -23,10 +23,20 @@ export default function LoginPage() {
   const [loading, setLoading] = useState(false)
   const [status, setStatus] = useState<{ type: 'success' | 'error'; message: string } | null>(null)
   const [remember, setRemember] = useState(false)
+  const [savedAccounts, setSavedAccounts] = useState<any[]>([])
+
+  const passwordInputRef = React.useRef<HTMLInputElement>(null)
+
+  useEffect(() => {
+    const saved = localStorage.getItem('saved_accounts')
+    if (saved) {
+      setSavedAccounts(JSON.parse(saved))
+    }
+  }, [])
 
   useEffect(() => {
     if (isAuthenticated) {
-      navigate('/dashboard')
+      navigate('/')
     }
   }, [isAuthenticated, navigate])
 
@@ -56,15 +66,15 @@ export default function LoginPage() {
       const response = await api.post('/api/login', { email, password, remember })
 
       if (response.status === 200) {
-        setStatus({ type: 'success', message: 'Login berhasil! Mengalihkan...' })
+        setStatus({ type: 'success', message: 'Login successful! Redirecting...' })
         setTimeout(() => {
           login(response.data.user)
         }, 1000)
       } else {
-        setStatus({ type: 'error', message: response.data.message || 'Email atau kata sandi salah.' })
+        setStatus({ type: 'error', message: response.data.message || 'Incorrect email or password.' })
       }
     } catch (err: any) {
-      const message = err.response?.data?.message || 'Gagal terhubung ke server.'
+      const message = err.response?.data?.message || 'Failed to connect to the server.'
       setStatus({ type: 'error', message })
     } finally {
       setLoading(false)
@@ -85,9 +95,107 @@ export default function LoginPage() {
           <div className="login-logo">
             <LogIn size={28} />
           </div>
-          <h1 className="login-title">Selamat Datang</h1>
-          <p className="login-subtitle">Masuk ke akun MyLibrary Anda</p>
+          <h1 className="login-title">Welcome Back</h1>
+          <p className="login-subtitle">Sign in to your MyLibrary account</p>
         </div>
+
+        {/* Saved Accounts Switcher Grid */}
+        {savedAccounts.length > 0 && (
+          <div className="saved-accounts-section" style={{ marginBottom: '1.5rem', animation: 'fadeIn 0.3s ease' }}>
+            <h3 style={{ fontSize: '0.8rem', fontWeight: 600, color: 'var(--text-secondary)', marginBottom: '0.75rem', textTransform: 'uppercase', letterSpacing: '0.05em' }}>
+              Choose a Saved Account
+            </h3>
+            <div className="saved-accounts-grid" style={{ display: 'flex', gap: '0.75rem', overflowX: 'auto', paddingBottom: '0.5rem' }}>
+              {savedAccounts.map((acc: any) => {
+                const initials = acc.name ? acc.name.split(' ').map((n: string) => n[0]).join('').substring(0, 2).toUpperCase() : 'U';
+                const isSelected = email === acc.email;
+                return (
+                  <div 
+                    key={acc.email} 
+                    className="saved-account-card glass-panel"
+                    onClick={() => {
+                      setEmail(acc.email);
+                      if (passwordInputRef.current) passwordInputRef.current.focus();
+                    }}
+                    style={{
+                      display: 'flex',
+                      alignItems: 'center',
+                      gap: '0.75rem',
+                      padding: '0.6rem 1rem',
+                      borderRadius: '12px',
+                      cursor: 'pointer',
+                      border: isSelected ? '1px solid var(--accent-color)' : '1px solid rgba(255,255,255,0.08)',
+                      background: isSelected ? 'rgba(138, 75, 243, 0.1)' : 'rgba(255,255,255,0.02)',
+                      transition: 'all 0.2s ease',
+                      position: 'relative',
+                      minWidth: '165px',
+                      flexShrink: 0
+                    }}
+                  >
+                    <div 
+                      className="saved-avatar" 
+                      style={{
+                        width: '32px',
+                        height: '32px',
+                        borderRadius: '50%',
+                        background: 'linear-gradient(135deg, #8a4bf3, #c14bf3)',
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                        fontSize: '0.8rem',
+                        fontWeight: 700,
+                        color: '#fff',
+                        flexShrink: 0
+                      }}
+                    >
+                      {initials}
+                    </div>
+                    <div style={{ display: 'flex', flexDirection: 'column', overflow: 'hidden', textAlign: 'left' }}>
+                      <span style={{ fontSize: '0.8rem', fontWeight: 600, color: 'var(--text-primary)', textOverflow: 'ellipsis', overflow: 'hidden', whiteSpace: 'nowrap' }}>
+                        {acc.name}
+                      </span>
+                      <span style={{ fontSize: '0.7rem', color: 'var(--text-secondary)', textOverflow: 'ellipsis', overflow: 'hidden', whiteSpace: 'nowrap' }}>
+                        {acc.email}
+                      </span>
+                    </div>
+
+                    {/* Delete Saved Account button */}
+                    <button 
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        const updated = savedAccounts.filter((x: any) => x.email !== acc.email);
+                        setSavedAccounts(updated);
+                        localStorage.setItem('saved_accounts', JSON.stringify(updated));
+                        if (email === acc.email) setEmail('');
+                      }}
+                      style={{
+                        position: 'absolute',
+                        top: '-4px',
+                        right: '-4px',
+                        width: '16px',
+                        height: '16px',
+                        borderRadius: '50%',
+                        background: 'rgba(239, 68, 68, 0.9)',
+                        color: '#fff',
+                        border: 'none',
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                        fontSize: '0.6rem',
+                        cursor: 'pointer',
+                        boxShadow: '0 2px 6px rgba(0,0,0,0.3)',
+                        transition: 'all 0.2s ease',
+                        padding: 0
+                      }}
+                    >
+                      ✕
+                    </button>
+                  </div>
+                );
+              })}
+            </div>
+          </div>
+        )}
 
         <AnimatePresence>
           {status && (
@@ -110,7 +218,7 @@ export default function LoginPage() {
               <Mail size={18} className="login-input-icon" />
               <input
                 type="email"
-                placeholder="nama@email.com"
+                placeholder="name@email.com"
                 value={email}
                 onChange={(e: React.ChangeEvent<HTMLInputElement>) => setEmail(e.target.value)}
                 onBlur={() => setEmailTouched(true)}
@@ -120,12 +228,13 @@ export default function LoginPage() {
           </div>
 
           <div className="login-field">
-            <label className="login-label">Kata Sandi</label>
+            <label className="login-label">Password</label>
             <div className={`login-input-wrap ${passwordTouched && !passwordValid ? 'login-input-wrap--error' : ''}`}>
               <Lock size={18} className="login-input-icon" />
               <input
+                ref={passwordInputRef}
                 type={showPassword ? 'text' : 'password'}
-                placeholder="Minimal 8 karakter"
+                placeholder="Minimum 8 characters"
                 value={password}
                 onChange={(e: React.ChangeEvent<HTMLInputElement>) => setPassword(e.target.value)}
                 onBlur={() => setPasswordTouched(true)}
@@ -148,18 +257,18 @@ export default function LoginPage() {
                 checked={remember} 
                 onChange={(e) => setRemember(e.target.checked)} 
               />
-              <span>Ingat saya</span>
+              <span>Remember me</span>
             </label>
-            <a href="#" className="login-forgot-link">Lupa kata sandi?</a>
+            <a href="#" className="login-forgot-link">Forgot password?</a>
           </div>
 
           <button type="submit" className="login-submit" disabled={loading}>
-            {loading ? <Loader2 size={20} className="login-spinner" /> : 'Masuk'}
+            {loading ? <Loader2 size={20} className="login-spinner" /> : 'Sign In'}
           </button>
         </form>
 
         <div className="login-divider">
-          <span>atau masuk dengan</span>
+          <span>or sign in with</span>
         </div>
 
         <div className="login-social-grid">
@@ -190,7 +299,7 @@ export default function LoginPage() {
         </div>
 
         <p className="login-footer-text">
-          Belum punya akun? <Link to="/register" className="login-link login-link--accent">Daftar sekarang</Link>
+          Don't have an account? <Link to="/register" className="login-link login-link--accent">Sign up now</Link>
         </p>
       </motion.div>
     </div>

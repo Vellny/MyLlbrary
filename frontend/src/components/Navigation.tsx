@@ -1,11 +1,10 @@
-import { Link, useLocation, useNavigate } from 'react-router-dom';
+import { Link, useLocation } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import './Navigation.css';
 
 export default function Navigation() {
   const { user, logout } = useAuth();
   const location = useLocation();
-  const navigate = useNavigate();
 
   // Don't show navigation in the reader view
   if (location.pathname.startsWith('/read/')) {
@@ -14,7 +13,6 @@ export default function Navigation() {
 
   const handleLogout = () => {
     logout();
-    navigate('/login');
   };
 
   return (
@@ -35,6 +33,10 @@ export default function Navigation() {
             <span className="nav-icon">🧭</span>
             <span className="nav-text">Discover</span>
           </Link>
+          <Link to="/create-novel" className={`nav-item ${location.pathname === '/create-novel' ? 'active' : ''}`}>
+            <span className="nav-icon">✍️</span>
+            <span className="nav-text">Write</span>
+          </Link>
           <Link to="/bookshelf" className={`nav-item ${location.pathname === '/bookshelf' ? 'active' : ''}`}>
             <span className="nav-icon">📚</span>
             <span className="nav-text">Bookshelf</span>
@@ -44,14 +46,14 @@ export default function Navigation() {
           <div className="nav-user">
             {user ? (
               <div className="user-menu-wrapper">
-                <div className="nav-item">
+                <Link to="/profile" className="nav-item">
                   {user.avatar ? (
                     <img src={user.avatar} alt="Avatar" className="nav-avatar" />
                   ) : (
                     <span className="nav-icon">👤</span>
                   )}
                   <span className="nav-text">Profile</span>
-                </div>
+                </Link>
                 {/* Desktop Dropdown */}
                 <div className="user-dropdown glass-panel">
                   <div className="dropdown-header">

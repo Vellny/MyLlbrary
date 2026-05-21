@@ -1,26 +1,33 @@
+import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
+import { mockFeaturedBook, mockTrendingBooks, mockCategories } from '../data/mockBooks';
+import type { BookSummary } from '../types';
 import './Discover.css';
 
-// --- MOCK DATA ---
-const mockFeaturedBook = {
-  id: '1',
-  title: 'The Starlight Heir',
-  author: 'Elara Vance',
-  synopsis: 'In a world where the Sun King’s Law is absolute, Elara discovers a power forbidden for centuries: the silver rain of falling stars.',
-  coverImage: 'https://images.unsplash.com/photo-1614729939124-032f0b56c9ce?auto=format&fit=crop&q=80&w=800',
-  tags: ['Fantasy', 'Magic', 'Adventure'],
-};
-
-const mockTrendingBooks = [
-  { id: '2', title: 'Neon Shadows', author: 'J.T. Cole', coverImage: 'https://images.unsplash.com/photo-1555679427-1f6dfcce943b?auto=format&fit=crop&q=80&w=400' },
-  { id: '3', title: 'Whispers of the Old Gods', author: 'M.R. Thorne', coverImage: 'https://images.unsplash.com/photo-1516979187457-637abb4f9353?auto=format&fit=crop&q=80&w=400' },
-  { id: '4', title: 'Crown of Thorns', author: 'Sarah J.', coverImage: 'https://images.unsplash.com/photo-1629196914212-e56598c92a2a?auto=format&fit=crop&q=80&w=400' },
-  { id: '5', title: 'Cybernetic Heart', author: 'Leo Vance', coverImage: 'https://images.unsplash.com/photo-1526336024174-e58f5cdd8e13?auto=format&fit=crop&q=80&w=400' },
-];
-
-const mockCategories = ['All', 'Romance', 'Fantasy', 'Sci-Fi', 'Mystery', 'Thriller', 'Horror'];
-
 export default function Discover() {
+  const [trendingBooks, setTrendingBooks] = useState<BookSummary[]>(mockTrendingBooks);
+  const [newlyUpdatedBooks, setNewlyUpdatedBooks] = useState<BookSummary[]>([...mockTrendingBooks].reverse());
+  const [activeCategory, setActiveCategory] = useState('All');
+
+  useEffect(() => {
+    const saved = localStorage.getItem('user_authored_books');
+    if (saved) {
+      try {
+        const userBooks = JSON.parse(saved);
+        const formatted: BookSummary[] = userBooks.map((b: BookSummary) => ({
+          id: b.id,
+          title: b.title,
+          author: b.author,
+          coverImage: b.coverImage
+        }));
+        setTrendingBooks([...formatted, ...mockTrendingBooks]);
+        setNewlyUpdatedBooks([...formatted, ...[...mockTrendingBooks].reverse()]);
+      } catch (err) {
+        console.error('Failed to parse user_authored_books:', err);
+      }
+    }
+  }, []);
+
   return (
     <div className="discover-page">
       {/* Hero / Featured Book Section */}
@@ -47,8 +54,12 @@ export default function Discover() {
       {/* Categories Horizontal Scroll */}
       <section className="categories-section">
         <div className="categories-container">
-          {mockCategories.map((category, index) => (
-            <button key={category} className={`category-pill ${index === 0 ? 'active' : ''}`}>
+          {mockCategories.map((category) => (
+            <button
+              key={category}
+              className={`category-pill ${activeCategory === category ? 'active' : ''}`}
+              onClick={() => setActiveCategory(category)}
+            >
               {category}
             </button>
           ))}
@@ -59,7 +70,7 @@ export default function Discover() {
       <section className="trending-section">
         <h2 className="section-title">Trending Now</h2>
         <div className="book-carousel">
-          {mockTrendingBooks.map(book => (
+          {trendingBooks.map(book => (
             <Link to={`/book/${book.id}`} key={book.id} className="book-card">
               <div className="book-cover-wrapper">
                 <img src={book.coverImage} alt={book.title} className="book-cover" />
@@ -71,11 +82,11 @@ export default function Discover() {
         </div>
       </section>
       
-      {/* Newly Updated Section (reusing mock data for structure) */}
+      {/* Newly Updated Section */}
       <section className="trending-section">
         <h2 className="section-title text-gradient">Newly Updated</h2>
         <div className="book-carousel">
-          {[...mockTrendingBooks].reverse().map(book => (
+          {newlyUpdatedBooks.map(book => (
             <Link to={`/book/${book.id}`} key={`new-${book.id}`} className="book-card">
               <div className="book-cover-wrapper">
                 <img src={book.coverImage} alt={book.title} className="book-cover" />

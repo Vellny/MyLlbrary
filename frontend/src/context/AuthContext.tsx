@@ -14,6 +14,7 @@ interface AuthContextType {
     user: User | null;
     login: (user: User) => void;
     logout: () => void;
+    updateUser: (updatedUser: User) => void;
     isAuthenticated: boolean;
     loading: boolean;
 }
@@ -44,7 +45,15 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     const login = (newUser: User) => {
         setUser(newUser);
         localStorage.setItem('user', JSON.stringify(newUser));
-        navigate('/dashboard');
+
+        // Sync with the saved accounts list
+        const saved = localStorage.getItem('saved_accounts');
+        const accounts: User[] = saved ? JSON.parse(saved) : [];
+        const filtered = accounts.filter(acc => acc.email !== newUser.email);
+        filtered.unshift(newUser);
+        localStorage.setItem('saved_accounts', JSON.stringify(filtered));
+
+        navigate('/');
     };
 
     const logout = async () => {
@@ -59,8 +68,24 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
         }
     };
 
+    const updateUser = (updatedUser: User) => {
+        setUser(updatedUser);
+        localStorage.setItem('user', JSON.stringify(updatedUser));
+
+        // Sync updated info with saved accounts
+        const saved = localStorage.getItem('saved_accounts');
+        if (saved) {
+            const accounts: User[] = JSON.parse(saved);
+            const index = accounts.findIndex(acc => acc.email === updatedUser.email);
+            if (index !== -1) {
+                accounts[index] = updatedUser;
+                localStorage.setItem('saved_accounts', JSON.stringify(accounts));
+            }
+        }
+    };
+
     return (
-        <AuthContext.Provider value={{ user, login, logout, isAuthenticated: !!user, loading }}>
+        <AuthContext.Provider value={{ user, login, logout, updateUser, isAuthenticated: !!user, loading }}>
             {children}
         </AuthContext.Provider>
     );

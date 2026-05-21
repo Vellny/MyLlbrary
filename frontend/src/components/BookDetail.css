@@ -275,3 +275,611 @@
 .load-more-btn:hover {
   background: var(--bg-surface-hover);
 }
+
+/* Chapter Modal Styling */
+.chapters-header-actions {
+  display: flex;
+  gap: 0.75rem;
+  align-items: center;
+}
+
+.add-chap-btn {
+  background: linear-gradient(135deg, #8a4bf3, #c14bf3);
+  color: #fff;
+  border: none;
+  padding: 0.4rem 1.1rem;
+  border-radius: 20px;
+  font-size: 0.85rem;
+  font-weight: 600;
+  cursor: pointer;
+  box-shadow: 0 4px 12px rgba(138, 75, 243, 0.3);
+  transition: all 0.2s ease;
+}
+
+.add-chap-btn:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 6px 16px rgba(138, 75, 243, 0.45);
+}
+
+.chapter-modal {
+  text-align: left;
+  width: 95%;
+  max-width: 600px;
+  display: flex;
+  flex-direction: column;
+  gap: 1.2rem;
+  padding: 2rem;
+  border: 1px solid rgba(138, 75, 243, 0.3);
+  box-shadow: 0 10px 40px rgba(138, 75, 243, 0.2);
+}
+
+.chapter-modal-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+  padding-bottom: 0.75rem;
+}
+
+.chapter-modal-title {
+  font-size: 1.25rem;
+  font-weight: 700;
+  margin: 0;
+  color: var(--text-primary);
+}
+
+.chapter-modal-close {
+  background: none;
+  border: none;
+  color: var(--text-secondary);
+  font-size: 1.2rem;
+  cursor: pointer;
+  transition: color 0.2s;
+}
+
+.chapter-modal-close:hover {
+  color: var(--text-primary);
+}
+
+.chapter-modal-error {
+  background: rgba(244, 63, 94, 0.1);
+  border: 1px solid rgba(244, 63, 94, 0.3);
+  color: #fb7185;
+  padding: 0.75rem 1rem;
+  border-radius: 8px;
+  font-size: 0.85rem;
+}
+
+.chapter-ai-toggle {
+  background: rgba(138, 75, 243, 0.06);
+  border: 1px dashed rgba(138, 75, 243, 0.3);
+  border-radius: 8px;
+  padding: 1rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.chapter-ai-label {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-weight: 600;
+  font-size: 0.85rem;
+  cursor: pointer;
+  color: #c14bf3;
+}
+
+.chapter-ai-content {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  margin-top: 0.5rem;
+  animation: fadeIn 0.2s ease;
+}
+
+.chapter-ai-hint {
+  font-size: 0.75rem;
+  color: var(--text-secondary);
+}
+
+.chapter-ai-textarea {
+  background: rgba(0, 0, 0, 0.2);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 6px;
+  padding: 0.5rem;
+  color: #fff;
+  font-size: 0.8rem;
+  min-height: 60px;
+  resize: vertical;
+  outline: none;
+}
+
+.chapter-ai-textarea:focus {
+  border-color: #8b5cf6;
+}
+
+.chapter-ai-generate-btn {
+  background: linear-gradient(135deg, #8a4bf3, #c14bf3);
+  color: #fff;
+  border: none;
+  padding: 0.4rem 1rem;
+  border-radius: 4px;
+  font-size: 0.8rem;
+  cursor: pointer;
+  align-self: flex-start;
+  font-weight: 600;
+  transition: opacity 0.2s;
+}
+
+.chapter-ai-generate-btn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.chapter-form-group {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.chapter-form-label {
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: var(--text-primary);
+}
+
+.chapter-form-input,
+.chapter-form-textarea {
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 6px;
+  padding: 0.6rem;
+  color: #fff;
+  font-size: 0.85rem;
+  outline: none;
+  transition: border-color 0.2s;
+}
+
+.chapter-form-input:focus,
+.chapter-form-textarea:focus {
+  border-color: #8b5cf6;
+}
+
+.chapter-form-textarea {
+  min-height: 150px;
+  resize: vertical;
+}
+
+.chapter-modal-footer {
+  display: flex;
+  justify-content: flex-end;
+  gap: 0.75rem;
+  border-top: 1px solid rgba(255, 255, 255, 0.1);
+  padding-top: 0.75rem;
+  margin-top: 0.5rem;
+}
+
+.chapter-cancel-btn {
+  background: rgba(255, 255, 255, 0.05);
+  color: var(--text-secondary);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  padding: 0.5rem 1.2rem;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 0.85rem;
+  transition: all 0.2s;
+}
+
+.chapter-cancel-btn:hover {
+  background: rgba(255, 255, 255, 0.1);
+  color: var(--text-primary);
+}
+
+.chapter-publish-btn {
+  background: #fff;
+  color: #000;
+  border: none;
+  padding: 0.5rem 1.2rem;
+  border-radius: 6px;
+  cursor: pointer;
+  font-weight: 700;
+  font-size: 0.85rem;
+  transition: background 0.2s;
+}
+
+.chapter-publish-btn:hover {
+  background: #f1f5f9;
+}
+
+.delete-btn {
+  background: rgba(239, 68, 68, 0.15);
+  border: 1px solid rgba(239, 68, 68, 0.4);
+  color: #f87171;
+  padding: 0.75rem 1.5rem;
+  border-radius: var(--radius-full);
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  transition: all 0.2s ease;
+}
+
+.delete-btn:hover {
+  background: rgba(239, 68, 68, 0.25);
+}
+
+/* Full-Screen distraction-free writer */
+.writer-fullscreen {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: #0d0e12;
+  z-index: 1200;
+  display: flex;
+  flex-direction: column;
+  color: #f1f5f9;
+  font-family: 'Inter', sans-serif;
+}
+
+.writer-topbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0.75rem 2rem;
+  background: rgba(13, 14, 18, 0.9);
+  backdrop-filter: blur(12px);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+  height: 60px;
+}
+
+.writer-topbar-left {
+  display: flex;
+  align-items: center;
+  gap: 1.25rem;
+}
+
+.writer-back-btn {
+  background: none;
+  border: none;
+  color: var(--text-secondary);
+  font-weight: 600;
+  cursor: pointer;
+  font-size: 0.95rem;
+  transition: color 0.2s ease;
+  display: flex;
+  align-items: center;
+}
+
+.writer-back-btn:hover {
+  color: #fff;
+}
+
+.writer-topbar-meta {
+  display: flex;
+  flex-direction: column;
+  border-left: 1px solid rgba(255, 255, 255, 0.1);
+  padding-left: 1.25rem;
+}
+
+.writer-topbar-book {
+  font-size: 0.8rem;
+  color: var(--text-secondary);
+  font-weight: 500;
+}
+
+.writer-topbar-chap {
+  font-size: 0.95rem;
+  font-weight: 700;
+  color: #fff;
+}
+
+.writer-topbar-right {
+  display: flex;
+  align-items: center;
+  gap: 1.5rem;
+}
+
+.writer-word-count {
+  font-size: 0.85rem;
+  color: var(--text-muted);
+  font-weight: 500;
+}
+
+.writer-publish-btn {
+  background: linear-gradient(135deg, #8a4bf3, #c14bf3);
+  color: #fff;
+  border: none;
+  padding: 0.5rem 1.5rem;
+  border-radius: 20px;
+  font-size: 0.85rem;
+  font-weight: 700;
+  cursor: pointer;
+  box-shadow: 0 4px 15px rgba(138, 75, 243, 0.35);
+  transition: all 0.2s ease;
+}
+
+.writer-publish-btn:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 6px 20px rgba(138, 75, 243, 0.5);
+}
+
+.writer-error-banner {
+  background: rgba(239, 68, 68, 0.15);
+  border-bottom: 1px solid rgba(239, 68, 68, 0.3);
+  color: #f87171;
+  padding: 0.75rem;
+  text-align: center;
+  font-size: 0.9rem;
+  font-weight: 600;
+}
+
+.writer-body {
+  flex: 1;
+  overflow-y: auto;
+  padding: 2.5rem 1rem;
+  display: flex;
+  justify-content: center;
+  background: #0d0e12;
+}
+
+.writer-canvas {
+  width: 100%;
+  max-width: 750px;
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.writer-title-input {
+  background: transparent;
+  border: none;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+  color: #fff;
+  font-size: 2.25rem;
+  font-weight: 800;
+  padding: 0.5rem 0;
+  outline: none;
+  transition: border-color 0.2s ease;
+  width: 100%;
+}
+
+.writer-title-input:focus {
+  border-bottom-color: rgba(138, 75, 243, 0.4);
+}
+
+.writer-title-input::placeholder {
+  color: rgba(255, 255, 255, 0.2);
+}
+
+.writer-ai-bar {
+  background: rgba(138, 75, 243, 0.05);
+  border: 1px solid rgba(138, 75, 243, 0.15);
+  border-radius: 8px;
+  padding: 0.75rem 1.25rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.writer-ai-toggle-label {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  font-weight: 700;
+  font-size: 0.9rem;
+  color: #c14bf3;
+  cursor: pointer;
+  user-select: none;
+}
+
+.writer-ai-toggle-label input {
+  display: none;
+}
+
+.writer-ai-toggle-dot {
+  width: 16px;
+  height: 16px;
+  border-radius: 50%;
+  border: 2px solid #c14bf3;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  transition: all 0.2s;
+}
+
+.writer-ai-toggle-label input:checked + .writer-ai-toggle-dot {
+  background: #c14bf3;
+}
+
+.writer-ai-panel {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  animation: slideDown 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.writer-ai-prompt {
+  background: rgba(0, 0, 0, 0.3);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 6px;
+  color: #fff;
+  padding: 0.75rem;
+  font-size: 0.85rem;
+  min-height: 70px;
+  resize: vertical;
+  outline: none;
+  line-height: 1.5;
+}
+
+.writer-ai-prompt:focus {
+  border-color: #8b5cf6;
+}
+
+.writer-ai-gen-btn {
+  background: rgba(138, 75, 243, 0.15);
+  color: #e9d5ff;
+  border: 1px solid rgba(138, 75, 243, 0.3);
+  padding: 0.5rem 1.25rem;
+  border-radius: 6px;
+  font-size: 0.85rem;
+  font-weight: 700;
+  cursor: pointer;
+  align-self: flex-start;
+  transition: all 0.2s;
+}
+
+.writer-ai-gen-btn:hover:not(:disabled) {
+  background: rgba(138, 75, 243, 0.25);
+  color: #fff;
+}
+
+.writer-ai-gen-btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.writer-prose-textarea {
+  flex: 1;
+  background: transparent;
+  border: none;
+  color: #e2e8f0;
+  font-family: 'Merriweather', 'Georgia', serif;
+  font-size: 1.15rem;
+  line-height: 2;
+  letter-spacing: 0.01em;
+  padding: 1rem 0;
+  resize: none;
+  outline: none;
+  min-height: 65vh;
+  width: 100%;
+}
+
+.writer-prose-textarea::placeholder {
+  color: rgba(255, 255, 255, 0.15);
+  font-style: italic;
+}
+
+/* Writer theme toggle button */
+.writer-theme-btn {
+  background: rgba(255, 255, 255, 0.05);
+  color: var(--text-primary);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  padding: 0.4rem 1rem;
+  border-radius: 20px;
+  font-size: 0.8rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+}
+
+.writer-theme-btn:hover {
+  background: rgba(255, 255, 255, 0.15);
+  transform: translateY(-0.5px);
+}
+
+/* Light Mode Overrides for Full-Screen Writer */
+.writer-light-mode {
+  background: #fbfaf7 !important; /* extremely premium, soft warm cream paper color */
+  color: #1a202c !important;
+}
+
+.writer-light-mode .writer-body {
+  background: #fbfaf7 !important;
+}
+
+.writer-light-mode .writer-topbar {
+  background: rgba(251, 250, 247, 0.95) !important;
+  border-bottom: 1px solid rgba(0, 0, 0, 0.06) !important;
+}
+
+.writer-light-mode .writer-topbar-book {
+  color: #718096 !important;
+}
+
+.writer-light-mode .writer-topbar-chap {
+  color: #1a202c !important;
+}
+
+.writer-light-mode .writer-back-btn {
+  color: #4a5568 !important;
+}
+
+.writer-light-mode .writer-back-btn:hover {
+  color: #1a202c !important;
+}
+
+.writer-light-mode .writer-word-count {
+  color: #718096 !important;
+}
+
+.writer-light-mode .writer-theme-btn {
+  background: rgba(0, 0, 0, 0.04) !important;
+  color: #2d3748 !important;
+  border: 1px solid rgba(0, 0, 0, 0.08) !important;
+}
+
+.writer-light-mode .writer-theme-btn:hover {
+  background: rgba(0, 0, 0, 0.08) !important;
+}
+
+.writer-light-mode .writer-title-input {
+  color: #1a202c !important;
+  border-bottom: 1px solid rgba(0, 0, 0, 0.06) !important;
+}
+
+.writer-light-mode .writer-title-input:focus {
+  border-bottom-color: rgba(138, 75, 243, 0.6) !important;
+}
+
+.writer-light-mode .writer-title-input::placeholder {
+  color: #a0aec0 !important;
+}
+
+.writer-light-mode .writer-prose-textarea {
+  color: #2d3748 !important; /* charcoal grey for highest legibility and eyes protection */
+}
+
+.writer-light-mode .writer-prose-textarea::placeholder {
+  color: #a0aec0 !important;
+}
+
+.writer-light-mode .writer-ai-bar {
+  background: rgba(138, 75, 243, 0.03) !important;
+  border: 1px solid rgba(138, 75, 243, 0.12) !important;
+}
+
+.writer-light-mode .writer-ai-prompt {
+  background: #fff !important;
+  border: 1px solid rgba(0, 0, 0, 0.1) !important;
+  color: #2d3748 !important;
+}
+
+.writer-light-mode .writer-ai-gen-btn {
+  background: rgba(138, 75, 243, 0.08) !important;
+  color: #6b21a8 !important;
+  border: 1px solid rgba(138, 75, 243, 0.2) !important;
+}
+
+.writer-light-mode .writer-ai-gen-btn:hover:not(:disabled) {
+  background: rgba(138, 75, 243, 0.15) !important;
+  color: #581c87 !important;
+}
+
+@keyframes slideDown {
+  from {
+    opacity: 0;
+    transform: translateY(-8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
