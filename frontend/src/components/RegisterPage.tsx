@@ -2,7 +2,7 @@ import React, { useState, useEffect, type FormEvent } from 'react'
 import { Eye, EyeOff, Mail, Lock, User, UserPlus, Loader2, CheckCircle2, AlertCircle } from 'lucide-react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { Link, useNavigate } from 'react-router-dom'
-import { useAuth } from '../context/AuthContext'
+import { useAuth } from '../context/useAuth'
 import api from '../api'
 import './Login.css'
 
@@ -27,13 +27,16 @@ export default function RegisterPage() {
 
   useEffect(() => {
     if (isAuthenticated) {
-      navigate('/dashboard')
+      navigate('/')
     }
   }, [isAuthenticated, navigate])
 
   useEffect(() => {
-    if (status) setStatus(null)
-  }, [name, email, password, passwordConfirmation])
+    if (status) {
+      const timer = setTimeout(() => setStatus(null), 3000)
+      return () => clearTimeout(timer)
+    }
+  }, [status])
 
   async function handleSubmit(e: FormEvent) {
     e.preventDefault()
@@ -59,8 +62,10 @@ export default function RegisterPage() {
           login(response.data.user)
         }, 1000)
       }
-    } catch (err: any) {
-      const message = err.response?.data?.message || 'Gagal registrasi.'
+    } catch (err: unknown) {
+      const message = err && typeof err === 'object' && 'response' in err
+        ? (err as { response: { data: { message: string } } }).response?.data?.message
+        : 'Gagal registrasi.'
       setStatus({ type: 'error', message })
     } finally {
       setLoading(false)
@@ -109,7 +114,7 @@ export default function RegisterPage() {
                 placeholder="Nama Anda"
                 value={name}
                 onChange={(e: React.ChangeEvent<HTMLInputElement>) => setName(e.target.value)}
-                onBlur={() => setTouched((prev: any) => ({ ...prev, name: true }))}
+                onBlur={() => setTouched((prev) => ({ ...prev, name: true }))}
                 disabled={loading}
               />
             </div>
@@ -124,7 +129,7 @@ export default function RegisterPage() {
                 placeholder="nama@email.com"
                 value={email}
                 onChange={(e: React.ChangeEvent<HTMLInputElement>) => setEmail(e.target.value)}
-                onBlur={() => setTouched((prev: any) => ({ ...prev, email: true }))}
+                onBlur={() => setTouched((prev) => ({ ...prev, email: true }))}
                 disabled={loading}
               />
             </div>
@@ -139,7 +144,7 @@ export default function RegisterPage() {
                 placeholder="Minimal 8 karakter"
                 value={password}
                 onChange={(e: React.ChangeEvent<HTMLInputElement>) => setPassword(e.target.value)}
-                onBlur={() => setTouched((prev: any) => ({ ...prev, password: true }))}
+                onBlur={() => setTouched((prev) => ({ ...prev, password: true }))}
                 disabled={loading}
               />
               <button
@@ -161,7 +166,7 @@ export default function RegisterPage() {
                 placeholder="Ulangi kata sandi"
                 value={passwordConfirmation}
                 onChange={(e: React.ChangeEvent<HTMLInputElement>) => setPasswordConfirmation(e.target.value)}
-                onBlur={() => setTouched((prev: any) => ({ ...prev, confirmation: true }))}
+                onBlur={() => setTouched((prev) => ({ ...prev, confirmation: true }))}
                 disabled={loading}
               />
             </div>

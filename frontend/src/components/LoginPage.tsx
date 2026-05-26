@@ -2,7 +2,8 @@ import React, { useState, useEffect, type FormEvent } from 'react'
 import { Eye, EyeOff, Mail, Lock, LogIn, Loader2, CheckCircle2, AlertCircle } from 'lucide-react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { Link, useNavigate } from 'react-router-dom'
-import { useAuth } from '../context/AuthContext'
+import { useAuth } from '../context/useAuth'
+import type { SavedAccount } from '../types'
 import api from '../api'
 import './Login.css'
 
@@ -14,6 +15,16 @@ function validatePassword(password: string): boolean {
   return password.length >= 8
 }
 
+function loadSavedAccounts(): SavedAccount[] {
+  const saved = localStorage.getItem('saved_accounts')
+  if (!saved) return []
+  try {
+    return JSON.parse(saved)
+  } catch {
+    return []
+  }
+}
+
 export default function LoginPage() {
   const { login, isAuthenticated } = useAuth()
   const navigate = useNavigate()
@@ -23,16 +34,9 @@ export default function LoginPage() {
   const [loading, setLoading] = useState(false)
   const [status, setStatus] = useState<{ type: 'success' | 'error'; message: string } | null>(null)
   const [remember, setRemember] = useState(false)
-  const [savedAccounts, setSavedAccounts] = useState<any[]>([])
+  const [savedAccounts, setSavedAccounts] = useState<SavedAccount[]>(loadSavedAccounts)
 
   const passwordInputRef = React.useRef<HTMLInputElement>(null)
-
-  useEffect(() => {
-    const saved = localStorage.getItem('saved_accounts')
-    if (saved) {
-      setSavedAccounts(JSON.parse(saved))
-    }
-  }, [])
 
   useEffect(() => {
     if (isAuthenticated) {
@@ -48,8 +52,11 @@ export default function LoginPage() {
   const formValid = emailValid && passwordValid
 
   useEffect(() => {
-    if (status) setStatus(null)
-  }, [email, password])
+    if (status) {
+      const timer = setTimeout(() => setStatus(null), 3000)
+      return () => clearTimeout(timer)
+    }
+  }, [status])
 
   async function handleSubmit(e: FormEvent) {
     e.preventDefault()
@@ -73,8 +80,10 @@ export default function LoginPage() {
       } else {
         setStatus({ type: 'error', message: response.data.message || 'Incorrect email or password.' })
       }
-    } catch (err: any) {
-      const message = err.response?.data?.message || 'Failed to connect to the server.'
+    } catch (err: unknown) {
+      const message = err && typeof err === 'object' && 'response' in err
+        ? (err as { response: { data: { message: string } } }).response?.data?.message
+        : 'Failed to connect to the server.'
       setStatus({ type: 'error', message })
     } finally {
       setLoading(false)
@@ -106,8 +115,8 @@ export default function LoginPage() {
               Choose a Saved Account
             </h3>
             <div className="saved-accounts-grid" style={{ display: 'flex', gap: '0.75rem', overflowX: 'auto', paddingBottom: '0.5rem' }}>
-              {savedAccounts.map((acc: any) => {
-                const initials = acc.name ? acc.name.split(' ').map((n: string) => n[0]).join('').substring(0, 2).toUpperCase() : 'U';
+              {savedAccounts.map((acc: SavedAccount) => {
+                const initials = acc.name ? acc.name.split(' ').map((n) => n[0]).join('').substring(0, 2).toUpperCase() : 'U';
                 const isSelected = email === acc.email;
                 return (
                   <div 
@@ -163,7 +172,7 @@ export default function LoginPage() {
                     <button 
                       onClick={(e) => {
                         e.stopPropagation();
-                        const updated = savedAccounts.filter((x: any) => x.email !== acc.email);
+                        const updated = savedAccounts.filter((x: SavedAccount) => x.email !== acc.email);
                         setSavedAccounts(updated);
                         localStorage.setItem('saved_accounts', JSON.stringify(updated));
                         if (email === acc.email) setEmail('');

@@ -6,7 +6,17 @@ const api = axios.create({
         'Accept': 'application/json',
         'Content-Type': 'application/json',
     },
-    withCredentials: true, // PENTING: Untuk Sanctum SPA (Cookie-based auth)
+    withCredentials: true,
 });
+
+api.interceptors.response.use(
+    (response) => response,
+    (error) => {
+        if (error.response?.status === 401) {
+            localStorage.removeItem('user');
+        }
+        return Promise.reject(error);
+    }
+);
 
 export default api;

@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { useAuth } from '../context/AuthContext';
+import { useAuth } from '../context/useAuth';
 import { 
   Sparkles, 
   BookOpen, 
@@ -143,7 +143,7 @@ export default function CreateBook() {
     ];
     
     // Choose pattern procedurally using length as seed
-    const seed = (words.join('').length) || Date.now();
+    const seed = words.join('').length;
     const finalTitle = titlePatterns[seed % titlePatterns.length];
 
     // Procedural Synopsis patterns

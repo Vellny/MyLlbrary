@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { useAuth } from '../context/AuthContext';
+import { useAuth } from '../context/useAuth';
 import api from '../api';
 import { 
   User as UserIcon, 
@@ -31,8 +31,8 @@ export default function ProfilePage() {
   const navigate = useNavigate();
 
   // Form edit states
-  const [name, setName] = useState('');
-  const [email, setEmail] = useState('');
+  const [name, setName] = useState(user?.name || '');
+  const email = user?.email || '';
   const [isEditing, setIsEditing] = useState(false);
   const [saveStatus, setSaveStatus] = useState<string | null>(null);
 
@@ -43,9 +43,6 @@ export default function ProfilePage() {
   useEffect(() => {
     if (!loading && !user) {
       navigate('/login');
-    } else if (user) {
-      setName(user.name);
-      setEmail(user.email);
     }
   }, [user, loading, navigate]);
 

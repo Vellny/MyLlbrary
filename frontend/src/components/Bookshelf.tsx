@@ -1,16 +1,44 @@
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import { Link, Navigate } from 'react-router-dom';
-import { useAuth } from '../context/AuthContext';
+import { useAuth } from '../context/useAuth';
+import type { Book } from '../types';
 import './Bookshelf.css';
 
+interface LibraryBook {
+  id: string;
+  title: string;
+  author: string;
+  coverImage: string;
+  progress: number;
+  currentChapter: number;
+}
+
+function loadUserLibrary(): LibraryBook[] {
+  const saved = localStorage.getItem('user_authored_books');
+  if (!saved) return [];
+  try {
+    const userBooks: Book[] = JSON.parse(saved);
+    return userBooks.map((b) => ({
+      id: b.id,
+      title: b.title,
+      author: b.author,
+      coverImage: b.coverImage,
+      progress: 0,
+      currentChapter: 1
+    }));
+  } catch {
+    return [];
+  }
+}
+
 // --- MOCK DATA ---
-const mockLibrary = [
+const mockLibrary: LibraryBook[] = [
   { 
     id: '1', 
     title: 'The Starlight Heir', 
     author: 'Elara Vance', 
     coverImage: 'https://images.unsplash.com/photo-1614729939124-032f0b56c9ce?auto=format&fit=crop&q=80&w=400',
-    progress: 45, // percentage
+    progress: 45,
     currentChapter: 1
   },
   { 
@@ -23,30 +51,16 @@ const mockLibrary = [
   }
 ];
 
+const initialLibrary: LibraryBook[] = [...loadUserLibrary(), ...mockLibrary];
+
 export default function Bookshelf() {
   const { user } = useAuth();
-  const [library, setLibrary] = useState(mockLibrary);
+  const [library] = useState(initialLibrary);
 
   // Redirect to login if unauthenticated
   if (!user) {
     return <Navigate to="/login" />;
   }
-
-  useEffect(() => {
-    const saved = localStorage.getItem('user_authored_books');
-    if (saved) {
-      const userBooks = JSON.parse(saved);
-      const formatted = userBooks.map((b: any) => ({
-        id: b.id,
-        title: b.title,
-        author: b.author,
-        coverImage: b.coverImage,
-        progress: 0,
-        currentChapter: 1
-      }));
-      setLibrary([...formatted, ...mockLibrary]);
-    }
-  }, []);
 
   return (
     <div className="bookshelf-page">

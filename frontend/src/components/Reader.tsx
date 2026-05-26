@@ -3,7 +3,7 @@ import { useParams, useNavigate } from 'react-router-dom';
 import { Menu, X } from 'lucide-react';
 import { bookTitles, isUserAuthoredBook, mockBooksDict } from '../data/mockBooks';
 import { allChaptersContent } from '../data/mockChapters';
-import type { Book } from '../types';
+import type { Book, ChapterListItem } from '../types';
 import './Reader.css';
 
 export default function Reader() {
@@ -39,11 +39,12 @@ export default function Reader() {
     const mockBook = mockBooksDict[bookId];
     if (mockBook) return mockBook.chaptersList || [];
 
-    return [
-      { id: `${bookId}_c1`, title: 'Chapter 1: ' + (bookId === '1' ? 'The Night of Silver Rain' : bookId === '2' ? 'Rain and Holograms' : bookId === '3' ? 'The Sunken City' : bookId === '4' ? 'The Winter Treaty' : 'The Emotion-Suppressor') },
-      { id: `${bookId}_c2`, title: 'Chapter 2: ' + (bookId === '1' ? 'Shards of Silence' : bookId === '2' ? 'The Datacore Heist' : bookId === '3' ? 'The Whispering Monoliths' : bookId === '4' ? 'The Court of Frost' : 'Unit Alpha-7') },
-      { id: `${bookId}_c3`, title: 'Chapter 3: ' + (bookId === '1' ? 'The Gilded Cage' : bookId === '2' ? 'Ghost in the Machine' : bookId === '3' ? 'Eyes in the Deep' : bookId === '4' ? 'The Cold Prince' : 'Spark of Life') }
+    const fallback: ChapterListItem[] = [
+      { id: `${bookId}_c1`, title: 'Chapter 1: ' + (bookId === '1' ? 'The Night of Silver Rain' : bookId === '2' ? 'Rain and Holograms' : bookId === '3' ? 'The Sunken City' : bookId === '4' ? 'The Winter Treaty' : 'The Emotion-Suppressor'), date: '', read: false },
+      { id: `${bookId}_c2`, title: 'Chapter 2: ' + (bookId === '1' ? 'Shards of Silence' : bookId === '2' ? 'The Datacore Heist' : bookId === '3' ? 'The Whispering Monoliths' : bookId === '4' ? 'The Court of Frost' : 'Unit Alpha-7'), date: '', read: false },
+      { id: `${bookId}_c3`, title: 'Chapter 3: ' + (bookId === '1' ? 'The Gilded Cage' : bookId === '2' ? 'Ghost in the Machine' : bookId === '3' ? 'Eyes in the Deep' : bookId === '4' ? 'The Cold Prince' : 'Spark of Life'), date: '', read: false }
     ];
+    return fallback;
   })();
 
   const totalChapters = bookChapters.length;
@@ -127,7 +128,7 @@ export default function Reader() {
           </button>
         </div>
         <div className="drawer-chapters-list">
-          {bookChapters.map((chapter: any, idx: number) => {
+          {bookChapters.map((chapter: ChapterListItem, idx: number) => {
             const isCurrent = chapter.id === contentKey;
             return (
               <div 
