@@ -11,6 +11,7 @@ import BookDetail from './components/BookDetail.tsx';
 import Reader from './components/Reader.tsx';
 import ProfilePage from './components/ProfilePage.tsx';
 import CreateBook from './components/CreateBook.tsx';
+import AuthCallback from './components/AuthCallback';
 import './App.css';
 
 function AppRoutes() {
@@ -25,6 +26,8 @@ function AppRoutes() {
           <Route path="/read/:chapterId" element={<Reader />} />
           <Route path="/login" element={<LoginPage />} />
           <Route path="/register" element={<RegisterPage />} />
+          {/* Callback dari social login (Google/Facebook) */}
+          <Route path="/auth/callback" element={<AuthCallback />} />
           <Route path="/profile" element={
             <ProtectedRoute><ProfilePage /></ProtectedRoute>
           } />
