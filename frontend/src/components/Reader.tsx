@@ -59,7 +59,36 @@ export default function Reader() {
   // Dynamic chapter content resolution (supporting newly created local novels)
   const getChapterContent = () => {
     if (!isUserAuthoredBook(bookId)) {
-      return allChaptersContent[contentKey] || "Content for this chapter is coming soon! Our scribes are working hard to transcribe the ancient scrolls.";
+      if (allChaptersContent[contentKey]) return allChaptersContent[contentKey];
+
+      // Procedurally generate unique content for middle chapters to make them all different!
+      const fragments = [
+        "The wind howled through the narrow corridors, carrying with it the scent of impending danger. They knew that turning back was no longer an option.",
+        "Shadows danced along the ancient stone walls. Every step forward felt heavier than the last, weighed down by the burden of their choices.",
+        "A sudden sound broke the silence—a sharp crack that echoed endlessly. Hands instinctively reached for weapons, eyes scanning the darkness.",
+        "\"We can't stay here much longer,\" a voice whispered, barely audible over the beating of their own hearts.",
+        "Memories of the past flickered in their minds, bittersweet and painful, serving as the only warmth in this cold, unforgiving place.",
+        "The path ahead split into two, both shrouded in an impenetrable gloom. The map was useless here; they had to rely on pure instinct.",
+        "A strange glowing light appeared in the distance. Was it a trap? Or the salvation they had been desperately searching for?",
+        "Fatigue was setting in, tearing at their muscles and clouding their judgment, but the fiery resolve in their eyes refused to die out.",
+        "\"Look at this,\" someone said, pointing at a strange runic symbol carved into the earth. It was ancient, pulsing with a faint, dormant magic.",
+        "Suddenly, the ground trembled. Dust fell from the ceiling as a low, guttural roar vibrated through the very soles of their boots."
+      ];
+
+      // Seed a pseudo-random generator based on chapter number to keep it consistent
+      const numMatch = contentKey.match(/_c(\d+)$/);
+      const num = numMatch ? parseInt(numMatch[1], 10) : 1;
+      let content = `*** CHAPTER ${num} ***\n\n`;
+      
+      // Generate roughly 2500 words by combining fragments uniquely based on the chapter
+      for (let i = 0; i < 150; i++) {
+        // Pseudo-random index based on chapter number and loop index
+        const index = ((num * 73) + (i * 37) + (num * i)) % fragments.length;
+        content += fragments[index] + " ";
+        if (i % 3 === 0) content += "\n\n";
+      }
+
+      return content;
     }
     try {
       const saved = localStorage.getItem('user_reader_chapters');
@@ -102,9 +131,10 @@ export default function Reader() {
     }
   }, [bookId, contentKey, totalChapters]);
 
-  // Auto-mark chapter as read when opening it
+  // Auto-mark chapter as read when opening it and scroll to top
   useEffect(() => {
     markAndReward();
+    window.scrollTo({ top: 0, behavior: 'instant' });
   }, [markAndReward]);
 
   // Get read chapters for drawer display

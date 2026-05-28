@@ -2698,5 +2698,49 @@ The suppressor on Leo’s neck was flashing an angry red, warning of "emotional 
 
 "They are tracking the suppressor's signal!" she warned, her cybernetic heart beating in a frantic rhythm against his palm.
 
-Leo stopped, reaching for the manual release tool in his pocket. With a sharp click, he ripped the silver collar from his neck, casting it into the gutter. For the first time in his life, he drew a breath of unfiltered air, his heart screaming with a wild, terrifying, and beautiful flood of raw love. He looked at the android beside him and smiled. "They can track us now. But they can't make us forget."`
+Leo stopped, reaching for the manual release tool in his pocket. With a sharp click, he ripped the silver collar from his neck, casting it into the gutter. For the first time in his life, he drew a breath of unfiltered air, his heart screaming with a wild, terrifying, and beautiful flood of raw love. He looked at the android beside him and smiled. "They can track us now. But they can't make us forget."`,
+
+  // --- CROWN OF THORNS CONTINUATION ---
+  '4_c4': `Clara awoke the next morning not to the biting chill she had come to expect, but to a strange, almost imperceptible warmth radiating from the stones beneath the thick furs of her bed. She sat up, her breath pluming in the cold air, though the frost on the inside of her window seemed thinner than the day before. 
+
+She remembered the look in Cassian's eyes on the balcony—the sudden, terrifying vulnerability that had cracked his icy facade. He had fled shortly after, leaving her alone with the echoing silence of the spire. But something had changed. The ancient magic that kept the Winter Court in a perpetual, agonizing freeze was tied directly to the heart of its ruler. 
+
+"My lady," a voice chimed softly from the doorway. 
+
+It was Elara, a fae servant with wings like shattered glass. She held a tray with steaming tea—a rare commodity in the frost. "The Prince has requested your presence in the Sun Room."
+
+Clara frowned. "The Sun Room? I was told it was sealed centuries ago."
+
+"It was," Elara said, a faint, fearful smile touching her blue lips. "But this morning, the ice over the doors melted."
+
+Clara dressed quickly in a gown of deep crimson—a stark contrast to the endless whites and blues of the court. As she walked the long, crystalline corridors, the usual sneers and hushed insults from the fae nobles were absent. Instead, they watched her with a mixture of awe and terror. 
+
+When she reached the Sun Room, the heavy oak doors stood wide open. Inside, sunlight—real, golden sunlight—was pouring through a massive glass dome that had been buried under snow for a millennia. 
+
+Cassian stood in the center of the room, bathing in the light. He turned as she entered, and for the first time, he didn't look like a king of winter. He looked like a man who had finally remembered what it was to be warm.
+
+"You brought the sun back," he said, his voice stripped of its usual haughty edge. "How?"
+
+Clara walked toward him, the warmth of the room seeping into her bones. "I didn't bring it back, Cassian. You just stopped shutting it out."`,
+
+  '4_c91': `The battle for the Winter Court had left the ice palace in ruins, but as the first true dawn broke over the jagged peaks, the destruction seemed less like an end and more like a beginning. 
+
+The ancient curse—the frost that had choked the land and frozen the hearts of its people—was gone. The great glaciers were weeping, transforming into rushing rivers of crystal-clear water that cascaded down the mountainsides. Where there had once been only barren snow, delicate green shoots were already pushing through the softening earth. Spring had returned to the fae, and it had been paid for in blood and fire.
+
+Clara stood at the edge of the ruined balcony, the morning breeze pulling at her soot-stained dress. Her hands were scarred from the magic she had channeled, mortal flesh burning with immortal power to break the High King's hold. She was exhausted, battered, and entirely at peace.
+
+Footsteps approached from behind, soft and hesitant. Cassian wrapped his arms around her waist, resting his chin on her shoulder. His skin was no longer the deathly pale of the Winter Prince. It had a flush of life, warm and real against hers. 
+
+"The High King is dead," Cassian murmured, his voice a low rumble against her neck. "The lords are pledging fealty to the new dawn. They want to crown us by midday."
+
+Clara leaned back against his chest, closing her eyes. "A crown of thorns no longer," she said softly. 
+
+"No," Cassian agreed, turning her gently to face him. He reached up, brushing a stray lock of hair from her cheek. In his hand, he held a simple circlet woven from the first green vines that had sprouted from the melting ice. "A crown of life."
+
+He placed it on her head, his blue eyes filled with a heat that had nothing to do with magic and everything to do with the mortal girl who had saved his soul. 
+
+As they kissed, the last of the ancient ice around the palace shattered, raining down like diamonds in the morning sun. The Winter Court was dead. The Court of Spring had begun.
+
+THE END.`,
+
 };
