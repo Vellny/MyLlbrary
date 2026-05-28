@@ -8,6 +8,7 @@ import Navigation from './components/Navigation';
 import Discover from './components/Discover.tsx';
 import Bookshelf from './components/Bookshelf.tsx';
 import BookDetail from './components/BookDetail.tsx';
+import BookChapters from './components/BookChapters.tsx';
 import Reader from './components/Reader.tsx';
 import ProfilePage from './components/ProfilePage.tsx';
 import CreateBook from './components/CreateBook.tsx';
@@ -23,6 +24,7 @@ function AppRoutes() {
           <Route path="/" element={<Discover />} />
           <Route path="/bookshelf" element={<Bookshelf />} />
           <Route path="/book/:id" element={<BookDetail />} />
+          <Route path="/book/:id/chapters" element={<BookChapters />} />
           <Route path="/read/:chapterId" element={<Reader />} />
           <Route path="/login" element={<LoginPage />} />
           <Route path="/register" element={<RegisterPage />} />

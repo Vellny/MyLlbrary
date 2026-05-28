@@ -371,7 +371,8 @@ export default function BookDetail() {
                   </p>
                 </div>
               )}
-              {book.chaptersList.map((chapter: ChapterListItem) => (
+              {/* Hanya tampilkan chapter pertama */}
+              {book.chaptersList.slice(0, 1).map((chapter: ChapterListItem) => (
                 <Link to={`/read/${chapter.id}`} key={chapter.id} className={`chapter-item ${chapter.read ? 'read' : ''}`}>
                   <div className="chapter-info">
                     <span className="chapter-title">{chapter.title}</span>
@@ -379,8 +380,12 @@ export default function BookDetail() {
                   </div>
                 </Link>
               ))}
-              {book.chaptersList.length > 3 && (
-                <button className="load-more-btn glass-panel">Load More Chapters</button>
+              
+              {/* Tombol See more untuk melihat semua chapter */}
+              {book.chaptersList.length > 1 && (
+                <Link to={`/book/${bookId}/chapters`} className="load-more-btn glass-panel" style={{ display: 'block', textAlign: 'center', textDecoration: 'none' }}>
+                  See more ({book.chaptersList.length} Chapters)
+                </Link>
               )}
             </div>
           </div>
