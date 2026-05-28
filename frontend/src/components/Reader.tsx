@@ -78,7 +78,7 @@ export default function Reader() {
       // Seed a pseudo-random generator based on chapter number to keep it consistent
       const numMatch = contentKey.match(/_c(\d+)$/);
       const num = numMatch ? parseInt(numMatch[1], 10) : 1;
-      let content = `*** CHAPTER ${num} ***\n\n`;
+      let content = '';
       
       // Generate roughly 2500 words by combining fragments uniquely based on the chapter
       for (let i = 0; i < 150; i++) {
@@ -134,7 +134,7 @@ export default function Reader() {
   // Auto-mark chapter as read when opening it and scroll to top
   useEffect(() => {
     markAndReward();
-    window.scrollTo({ top: 0, behavior: 'instant' });
+    document.querySelector('.reader-page')?.scrollTo({ top: 0, behavior: 'instant' });
   }, [markAndReward]);
 
   // Get read chapters for drawer display
