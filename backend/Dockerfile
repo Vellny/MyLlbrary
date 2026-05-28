@@ -1,6 +1,6 @@
 FROM php:8.2-cli
 
-# Install dependencies
+# Install system dependencies
 RUN apt-get update && apt-get install -y \
     git \
     curl \
@@ -10,12 +10,11 @@ RUN apt-get update && apt-get install -y \
     libzip-dev \
     zip \
     unzip \
-    libpq-dev
+    libpq-dev \
+    && apt-get clean \
+    && rm -rf /var/lib/apt/lists/*
 
-# Clear cache
-RUN apt-get clean && rm -rf /var/lib/apt/lists/*
-
-# Install PHP extensions (including PDO PostgreSQL for Render)
+# Install PHP extensions (pdo_pgsql untuk Supabase/Render PostgreSQL)
 RUN docker-php-ext-install pdo_mysql pdo_pgsql mbstring exif pcntl bcmath gd zip
 
 # Get latest Composer
@@ -30,13 +29,22 @@ COPY . .
 # Install composer dependencies
 RUN composer install --no-dev --optimize-autoloader --no-interaction
 
+# Cache config & routes (bukan migrate — migrate dijalankan saat startup)
+RUN php artisan config:cache \
+    && php artisan route:cache \
+    && php artisan view:cache
+
 # Set permissions
 RUN chown -R www-data:www-data /app \
     && chmod -R 775 /app/storage \
     && chmod -R 775 /app/bootstrap/cache
 
+# Copy startup script
+COPY start.sh /start.sh
+RUN chmod +x /start.sh
+
 # Expose port
 EXPOSE 8000
 
-# Start artisan server
-CMD php artisan serve --host=0.0.0.0 --port=${PORT:-8000}
+# Jalankan startup script (migrate lalu serve)
+CMD ["/start.sh"]

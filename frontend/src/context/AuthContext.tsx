@@ -12,7 +12,7 @@ interface User {
 
 export interface AuthContextType {
     user: User | null;
-    login: (user: User) => void;
+    login: (user: User, token?: string) => void;
     logout: () => void;
     updateUser: (updatedUser: User) => void;
     isAuthenticated: boolean;
@@ -27,12 +27,25 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     const navigate = useNavigate();
 
     useEffect(() => {
-        // Cek status login saat aplikasi dimuat
+        // Cek status login saat aplikasi dimuat menggunakan stored token
         const checkAuth = async () => {
+            const token = localStorage.getItem('auth_token');
+            if (!token) {
+                // Coba load dari localStorage jika ada
+                const storedUser = localStorage.getItem('user');
+                if (storedUser) {
+                    try { setUser(JSON.parse(storedUser)); } catch { /* invalid */ }
+                }
+                setLoading(false);
+                return;
+            }
             try {
                 const response = await api.get('/api/user');
                 setUser(response.data);
             } catch {
+                // Token tidak valid — hapus semua
+                localStorage.removeItem('auth_token');
+                localStorage.removeItem('user');
                 setUser(null);
             } finally {
                 setLoading(false);
@@ -42,7 +55,11 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
         checkAuth();
     }, []);
 
-    const login = (newUser: User) => {
+    const login = (newUser: User, token?: string) => {
+        // Simpan token jika diberikan (dari login/register/social)
+        if (token) {
+            localStorage.setItem('auth_token', token);
+        }
         setUser(newUser);
         localStorage.setItem('user', JSON.stringify(newUser));
 
@@ -63,6 +80,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
             console.error('Logout failed', err);
         } finally {
             setUser(null);
+            localStorage.removeItem('auth_token');
             localStorage.removeItem('user');
             navigate('/login');
         }
@@ -90,5 +108,3 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
         </AuthContext.Provider>
     );
 };
-
-
