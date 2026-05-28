@@ -15,7 +15,7 @@ export const mockFeaturedBook = {
 export const mockTrendingBooks: BookSummary[] = [
   { id: '2', title: 'Neon Shadows', author: 'J.T. Cole', coverImage: 'https://images.unsplash.com/photo-1555679427-1f6dfcce943b?auto=format&fit=crop&q=80&w=400' },
   { id: '3', title: 'Whispers of the Old Gods', author: 'M.R. Thorne', coverImage: 'https://images.unsplash.com/photo-1516979187457-637abb4f9353?auto=format&fit=crop&q=80&w=400' },
-  { id: '4', title: 'Crown of Thorns', author: 'Sarah J.', coverImage: 'https://images.unsplash.com/photo-1629196914212-e56598c92a2a?auto=format&fit=crop&q=80&w=400' },
+  { id: '4', title: 'Crown of Thorns', author: 'Sarah J.', coverImage: '/crown_of_thorns.png' },
   { id: '5', title: 'Cybernetic Heart', author: 'Leo Vance', coverImage: 'https://images.unsplash.com/photo-1526336024174-e58f5cdd8e13?auto=format&fit=crop&q=80&w=400' },
 ];
 
@@ -71,7 +71,7 @@ export const mockBooksDict: Record<string, Book> = {
     title: 'Crown of Thorns',
     author: 'Sarah J.',
     synopsis: 'A mortal girl is forced to marry the cold-hearted prince of the Winter Fae to seal a peace treaty. But in a court of ice and lies, love is the most dangerous weapon of all.',
-    coverImage: 'https://images.unsplash.com/photo-1629196914212-e56598c92a2a?auto=format&fit=crop&q=80&w=400',
+    coverImage: '/crown_of_thorns.png',
     tags: ['Romance', 'Fantasy', 'Royalty'],
     stats: { reads: '2.1M', rating: '4.9', chapters: 3 },
     chaptersList: [
