@@ -1,10 +1,25 @@
+import { useState, useEffect } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { useAuth } from '../context/useAuth';
+import { getCoins, isVIP } from '../services/rewards';
 import './Navigation.css';
 
 export default function Navigation() {
   const { user, logout } = useAuth();
   const location = useLocation();
+  const [coins, setCoins] = useState(getCoins());
+  const [vip, setVip] = useState(isVIP());
+
+  // Refresh coin balance on navigation and periodically
+  useEffect(() => {
+    setCoins(getCoins());
+    setVip(isVIP());
+    const interval = setInterval(() => {
+      setCoins(getCoins());
+      setVip(isVIP());
+    }, 2000);
+    return () => clearInterval(interval);
+  }, [location.pathname]);
 
   // Don't show navigation in the reader view
   if (location.pathname.startsWith('/read/')) {
@@ -41,6 +56,13 @@ export default function Navigation() {
             <span className="nav-icon">📚</span>
             <span className="nav-text">Bookshelf</span>
           </Link>
+
+          {/* Coin Balance */}
+          <div className="nav-coins" title={`${coins} Star Coins${vip ? ' · VIP Member' : ''}`}>
+            <span className="coin-icon">🪙</span>
+            <span className="coin-count">{coins}</span>
+            {vip && <span className="vip-badge">VIP</span>}
+          </div>
           
           {/* Mobile Profile Link / Desktop User Menu */}
           <div className="nav-user">
@@ -77,3 +99,4 @@ export default function Navigation() {
     </nav>
   );
 }
+

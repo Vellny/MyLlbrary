@@ -1,8 +1,9 @@
-import { useState } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import { Menu, X } from 'lucide-react';
+import { Menu, X, Award, Coins } from 'lucide-react';
 import { bookTitles, isUserAuthoredBook, mockBooksDict } from '../data/mockBooks';
 import { allChaptersContent } from '../data/mockChapters';
+import { markChapterRead, checkAndClaimMilestones, getReadChapters } from '../services/rewards';
 import type { Book, ChapterListItem } from '../types';
 import './Reader.css';
 
@@ -15,6 +16,9 @@ export default function Reader() {
   // Theme state
   const [theme, setTheme] = useState('dark'); // 'light', 'dark', 'sepia'
   const [fontSize, setFontSize] = useState(1.1);
+
+  // Reward notification
+  const [rewardNotification, setRewardNotification] = useState<{ coins: number; label: string } | null>(null);
 
   // Get current chapter and book details
   const currentId = chapterId || '1_c1';
@@ -87,6 +91,28 @@ export default function Reader() {
     return bookTitles[bookId] || 'The Starlight Heir';
   })();
 
+  // Mark chapter as read and check milestones
+  const markAndReward = useCallback(() => {
+    markChapterRead(bookId, contentKey);
+    const newMilestones = checkAndClaimMilestones(bookId, totalChapters);
+    if (newMilestones.length > 0) {
+      const latest = newMilestones[newMilestones.length - 1];
+      setRewardNotification({ coins: latest.coins, label: latest.label });
+      setTimeout(() => setRewardNotification(null), 5000);
+    }
+  }, [bookId, contentKey, totalChapters]);
+
+  // Auto-mark chapter as read when opening it
+  useEffect(() => {
+    markAndReward();
+  }, [markAndReward]);
+
+  // Get read chapters for drawer display
+  const readChaptersSet = new Set(getReadChapters(bookId));
+
+  // Calculate reading progress
+  const progressPercent = totalChapters > 0 ? Math.round((readChaptersSet.size / totalChapters) * 100) : 0;
+
   // Toggle controls on click
   const toggleControls = () => setShowControls(!showControls);
 
@@ -105,6 +131,26 @@ export default function Reader() {
 
   return (
     <div className={`reader-page theme-${theme}`} onClick={toggleControls}>
+      {/* Milestone Reward Notification */}
+      {rewardNotification && (
+        <div className="reward-notification" onClick={e => e.stopPropagation()}>
+          <div className="reward-notification-content">
+            <div className="reward-icon-wrap">
+              <Award size={28} className="reward-icon" />
+            </div>
+            <div className="reward-text">
+              <h4>🎉 Milestone Reached!</h4>
+              <p>{rewardNotification.label}</p>
+              <div className="reward-coins">
+                <Coins size={16} />
+                <span>+{rewardNotification.coins} coins earned!</span>
+              </div>
+            </div>
+          </div>
+          <div className="reward-progress-fill" />
+        </div>
+      )}
+
       {/* Top Navbar */}
       <div className={`reader-header ${showControls ? 'visible' : ''}`} onClick={e => e.stopPropagation()}>
         <button onClick={() => navigate(-1)} className="reader-btn">
@@ -119,6 +165,12 @@ export default function Reader() {
         </button>
       </div>
 
+      {/* Reading Progress Bar */}
+      <div className={`reader-progress-bar ${showControls ? 'visible' : ''}`}>
+        <div className="reader-progress-fill" style={{ width: `${progressPercent}%` }} />
+        <span className="reader-progress-text">{progressPercent}%</span>
+      </div>
+
       {/* Chapters Side Drawer (Hamburger Menu) */}
       <div className={`chapters-drawer glass-panel ${isDrawerOpen ? 'open' : ''}`} onClick={e => e.stopPropagation()}>
         <div className="drawer-header">
@@ -127,19 +179,29 @@ export default function Reader() {
             <X size={20} />
           </button>
         </div>
+
+        {/* Progress in Drawer */}
+        <div className="drawer-progress">
+          <div className="drawer-progress-bar">
+            <div className="drawer-progress-fill" style={{ width: `${progressPercent}%` }} />
+          </div>
+          <span className="drawer-progress-label">{readChaptersSet.size}/{totalChapters} chapters · {progressPercent}%</span>
+        </div>
+
         <div className="drawer-chapters-list">
           {bookChapters.map((chapter: ChapterListItem, idx: number) => {
             const isCurrent = chapter.id === contentKey;
+            const isRead = readChaptersSet.has(chapter.id);
             return (
               <div 
                 key={chapter.id} 
-                className={`drawer-chapter-item ${isCurrent ? 'active' : ''}`}
+                className={`drawer-chapter-item ${isCurrent ? 'active' : ''} ${isRead ? 'read' : ''}`}
                 onClick={() => {
                   setIsDrawerOpen(false);
                   navigate(`/read/${chapter.id}`);
                 }}
               >
-                <span className="drawer-chap-num">{idx + 1}</span>
+                <span className="drawer-chap-num">{isRead ? '✓' : idx + 1}</span>
                 <span className="drawer-chap-title">{chapter.title}</span>
               </div>
             );

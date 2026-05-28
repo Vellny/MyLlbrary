@@ -134,83 +134,85 @@ export default function Discover() {
 
   return (
     <div className="discover-page">
+      {/* Search Section - Top of page */}
+      <section className="search-section">
+        <div className="search-container" ref={searchContainerRef}>
+          <div className={`search-bar ${isSearchFocused ? 'search-bar--focused' : ''} ${showResults ? 'search-bar--has-results' : ''}`}>
+            <Search size={20} className="search-icon" />
+            <input
+              ref={searchInputRef}
+              type="text"
+              className="search-input"
+              placeholder="Search books, authors, or genres..."
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+              onFocus={() => setIsSearchFocused(true)}
+              onKeyDown={handleSearchKeyDown}
+              id="search-input"
+            />
+            {searchQuery && (
+              <button className="search-clear-btn" onClick={clearSearch} aria-label="Clear search">
+                <X size={16} />
+              </button>
+            )}
+          </div>
+
+          {/* Search Results Dropdown */}
+          {showResults && (
+            <div className="search-results-dropdown">
+              {searchResults.length > 0 ? (
+                <>
+                  <div className="search-results-header">
+                    <Sparkles size={14} />
+                    <span>{searchResults.length} result{searchResults.length !== 1 ? 's' : ''} found</span>
+                  </div>
+                  {searchResults.map((book, index) => (
+                    <Link
+                      to={`/book/${book.id}`}
+                      key={book.id}
+                      className={`search-result-item ${index === selectedIndex ? 'search-result-item--selected' : ''}`}
+                      onClick={() => {
+                        setIsSearchFocused(false);
+                        setSearchQuery('');
+                      }}
+                      onMouseEnter={() => setSelectedIndex(index)}
+                    >
+                      <div className="search-result-cover">
+                        <img src={book.coverImage} alt={book.title} />
+                      </div>
+                      <div className="search-result-info">
+                        <h4 className="search-result-title">{book.title}</h4>
+                        <p className="search-result-author">by {book.author}</p>
+                        {book.tags.length > 0 && (
+                          <div className="search-result-tags">
+                            {book.tags.slice(0, 3).map(tag => (
+                              <span key={tag} className="search-result-tag">{tag}</span>
+                            ))}
+                          </div>
+                        )}
+                      </div>
+                      <BookOpen size={16} className="search-result-arrow" />
+                    </Link>
+                  ))}
+                </>
+              ) : (
+                <div className="search-no-results">
+                  <Search size={32} className="search-no-results-icon" />
+                  <p>No books found for "<strong>{searchQuery}</strong>"</p>
+                  <span>Try searching by title, author, or genre</span>
+                </div>
+              )}
+            </div>
+          )}
+        </div>
+      </section>
+
       {/* Hero / Featured Book Section */}
       <section className="hero-section">
         <div className="hero-background" style={{ backgroundImage: `url(${mockFeaturedBook.coverImage})` }}>
           <div className="hero-overlay"></div>
         </div>
         <div className="hero-content">
-          {/* Search Bar */}
-          <div className="search-container" ref={searchContainerRef}>
-            <div className={`search-bar ${isSearchFocused ? 'search-bar--focused' : ''} ${showResults ? 'search-bar--has-results' : ''}`}>
-              <Search size={20} className="search-icon" />
-              <input
-                ref={searchInputRef}
-                type="text"
-                className="search-input"
-                placeholder="Search books, authors, or genres..."
-                value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
-                onFocus={() => setIsSearchFocused(true)}
-                onKeyDown={handleSearchKeyDown}
-                id="search-input"
-              />
-              {searchQuery && (
-                <button className="search-clear-btn" onClick={clearSearch} aria-label="Clear search">
-                  <X size={16} />
-                </button>
-              )}
-            </div>
-
-            {/* Search Results Dropdown */}
-            {showResults && (
-              <div className="search-results-dropdown">
-                {searchResults.length > 0 ? (
-                  <>
-                    <div className="search-results-header">
-                      <Sparkles size={14} />
-                      <span>{searchResults.length} result{searchResults.length !== 1 ? 's' : ''} found</span>
-                    </div>
-                    {searchResults.map((book, index) => (
-                      <Link
-                        to={`/book/${book.id}`}
-                        key={book.id}
-                        className={`search-result-item ${index === selectedIndex ? 'search-result-item--selected' : ''}`}
-                        onClick={() => {
-                          setIsSearchFocused(false);
-                          setSearchQuery('');
-                        }}
-                        onMouseEnter={() => setSelectedIndex(index)}
-                      >
-                        <div className="search-result-cover">
-                          <img src={book.coverImage} alt={book.title} />
-                        </div>
-                        <div className="search-result-info">
-                          <h4 className="search-result-title">{book.title}</h4>
-                          <p className="search-result-author">by {book.author}</p>
-                          {book.tags.length > 0 && (
-                            <div className="search-result-tags">
-                              {book.tags.slice(0, 3).map(tag => (
-                                <span key={tag} className="search-result-tag">{tag}</span>
-                              ))}
-                            </div>
-                          )}
-                        </div>
-                        <BookOpen size={16} className="search-result-arrow" />
-                      </Link>
-                    ))}
-                  </>
-                ) : (
-                  <div className="search-no-results">
-                    <Search size={32} className="search-no-results-icon" />
-                    <p>No books found for "<strong>{searchQuery}</strong>"</p>
-                    <span>Try searching by title, author, or genre</span>
-                  </div>
-                )}
-              </div>
-            )}
-          </div>
-
           <span className="featured-badge">Featured Story</span>
           <h1 className="hero-title">{mockFeaturedBook.title}</h1>
           <p className="hero-author">by {mockFeaturedBook.author}</p>

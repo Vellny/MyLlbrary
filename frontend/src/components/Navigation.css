@@ -114,6 +114,51 @@
   color: var(--accent-primary);
 }
 
+/* Coin Balance */
+.nav-coins {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  padding: 0.4rem 0.85rem;
+  background: rgba(245, 158, 11, 0.08);
+  border: 1px solid rgba(245, 158, 11, 0.2);
+  border-radius: 999px;
+  cursor: default;
+  transition: all 0.2s ease;
+}
+
+.nav-coins:hover {
+  background: rgba(245, 158, 11, 0.14);
+  border-color: rgba(245, 158, 11, 0.35);
+}
+
+.coin-icon {
+  font-size: 1rem;
+  animation: coinSpin 3s ease infinite;
+}
+
+@keyframes coinSpin {
+  0%, 80%, 100% { transform: rotateY(0deg); }
+  90% { transform: rotateY(180deg); }
+}
+
+.coin-count {
+  font-size: 0.85rem;
+  font-weight: 700;
+  color: #f59e0b;
+}
+
+.vip-badge {
+  font-size: 0.6rem;
+  font-weight: 800;
+  padding: 0.1rem 0.4rem;
+  background: linear-gradient(135deg, #f59e0b, #ef4444);
+  color: white;
+  border-radius: 4px;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+}
+
 /* Mobile Responsive */
 @media (max-width: 768px) {
   .main-nav {
