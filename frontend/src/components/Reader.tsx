@@ -130,14 +130,14 @@ export default function Reader() {
         if (saved) {
           const userBooks: Book[] = JSON.parse(saved);
           const found = userBooks.find((b) => b.id === bookId);
-          if (found && found.coverUrl) return found.coverUrl;
+          if (found && found.coverImage) return found.coverImage;
         }
       } catch (err) {
         // ignore
       }
     }
     const mockBook = mockBooksDict[bookId];
-    if (mockBook && mockBook.coverUrl) return mockBook.coverUrl;
+    if (mockBook && mockBook.coverImage) return mockBook.coverImage;
     return 'https://images.unsplash.com/photo-1614729939124-032f0b56c9ce?auto=format&fit=crop&q=80&w=800'; // Default cover
   })();
 
