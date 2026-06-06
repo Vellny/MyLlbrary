@@ -41,7 +41,12 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
             }
             try {
                 const response = await api.get('/api/user');
-                setUser(response.data);
+                const userData = response.data;
+                const localAvatar = localStorage.getItem(`user_avatar_${userData.id}`);
+                if (localAvatar) {
+                    userData.avatar = localAvatar;
+                }
+                setUser(userData);
             } catch {
                 // Token tidak valid — hapus semua
                 localStorage.removeItem('auth_token');
@@ -60,6 +65,12 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
         if (token) {
             localStorage.setItem('auth_token', token);
         }
+        
+        const localAvatar = localStorage.getItem(`user_avatar_${newUser.id}`);
+        if (localAvatar) {
+            newUser.avatar = localAvatar;
+        }
+
         setUser(newUser);
         localStorage.setItem('user', JSON.stringify(newUser));
 

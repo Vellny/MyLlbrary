@@ -48,7 +48,6 @@ export default function RegisterPage() {
     setStatus(null)
 
     try {
-      await api.get('/sanctum/csrf-cookie')
       const response = await api.post('/api/register', { 
         name, 
         email, 
@@ -59,7 +58,7 @@ export default function RegisterPage() {
       if (response.status === 201) {
         setStatus({ type: 'success', message: 'Registrasi berhasil! Mengalihkan...' })
         setTimeout(() => {
-          login(response.data.user)
+          login(response.data.user, response.data.token)
         }, 1000)
       }
     } catch (err: unknown) {

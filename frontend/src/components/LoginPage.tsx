@@ -69,13 +69,12 @@ export default function LoginPage() {
     setStatus(null)
 
     try {
-      await api.get('/sanctum/csrf-cookie')
       const response = await api.post('/api/login', { email, password, remember })
 
       if (response.status === 200) {
         setStatus({ type: 'success', message: 'Login successful! Redirecting...' })
         setTimeout(() => {
-          login(response.data.user)
+          login(response.data.user, response.data.token)
         }, 1000)
       } else {
         setStatus({ type: 'error', message: response.data.message || 'Incorrect email or password.' })

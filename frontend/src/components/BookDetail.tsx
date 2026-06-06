@@ -2,13 +2,16 @@ import { useState } from 'react';
 import { useParams, Link, useNavigate } from 'react-router-dom';
 import { Award, Coins, Crown } from 'lucide-react';
 import { mockBooksDict, isUserAuthoredBook } from '../data/mockBooks';
-import { getReadingProgress, getClaimedMilestones, MILESTONES, getCoins, redeemVIP, isVIP, VIP_COST } from '../services/rewards';
+import { getReadingProgress, getClaimedMilestones, MILESTONES, getCoins, redeemVIP, isVIP, VIP_COST, addChapterWritten } from '../services/rewards';
+import { useAuth } from '../context/useAuth';
 import type { Book, ChapterListItem } from '../types';
 import './BookDetail.css';
 
 export default function BookDetail() {
   const params = useParams();
   const navigate = useNavigate();
+  const { user } = useAuth();
+  const userId = user?.id ?? 'guest';
   const bookId = params.id || '1';
 
   // Dynamically resolve book details (checking localStorage first)
@@ -88,6 +91,11 @@ export default function BookDetail() {
       const readerChapters: Record<string, string> = savedChapters ? JSON.parse(savedChapters) : {};
       readerChapters[newChapId] = `Chapter ${newChapNum}: ${newChapTitle}\n\n${newChapContent}`;
       localStorage.setItem('user_reader_chapters', JSON.stringify(readerChapters));
+
+      // Track that the user wrote a chapter for Premium Level progress
+      if (userId !== 'guest') {
+        addChapterWritten(userId);
+      }
 
       setNewChapTitle('');
       setNewChapContent('');
@@ -239,80 +247,7 @@ export default function BookDetail() {
               </div>
             </div>
 
-            {/* Reading Progress & Star Points */}
-            {book.chaptersList.length > 0 && (() => {
-              const progress = getReadingProgress(bookId, book.chaptersList.length);
-              const claimed = getClaimedMilestones(bookId);
-              const coins = getCoins();
-              const vipStatus = isVIP();
 
-              return (
-                <div className="reading-progress-section glass-panel">
-                  <div className="progress-header">
-                    <Award size={18} className="progress-icon" />
-                    <span className="progress-title">Reading Progress</span>
-                    <span className="progress-percent">{progress}%</span>
-                  </div>
-                  
-                  <div className="progress-bar-container">
-                    <div className="progress-bar-bg">
-                      <div className="progress-bar-fill" style={{ width: `${progress}%` }} />
-                    </div>
-                  </div>
-
-                  <div className="milestones-grid">
-                    {MILESTONES.map((m) => {
-                      const isClaimed = claimed.includes(m.percent);
-                      const isReached = progress >= m.percent;
-                      return (
-                        <div 
-                          key={m.percent} 
-                          className={`milestone-item ${isClaimed ? 'claimed' : ''} ${isReached && !isClaimed ? 'reached' : ''} ${!isReached ? 'locked' : ''}`}
-                        >
-                          <div className="milestone-badge">
-                            {isClaimed ? '✓' : `${m.percent}%`}
-                          </div>
-                          <span className="milestone-label">{m.label.split('—')[1]?.trim()}</span>
-                          <div className="milestone-reward">
-                            <Coins size={12} />
-                            <span>{m.coins}</span>
-                          </div>
-                        </div>
-                      );
-                    })}
-                  </div>
-
-                  {/* VIP Exchange */}
-                  <div className="vip-exchange">
-                    <div className="vip-exchange-info">
-                      <Crown size={16} className="vip-crown" />
-                      <span>Your Balance: <strong className="coin-highlight">{coins} coins</strong></span>
-                    </div>
-                    {!vipStatus ? (
-                      <button 
-                        className={`vip-redeem-btn ${coins >= VIP_COST ? '' : 'disabled'}`}
-                        onClick={() => {
-                          if (redeemVIP()) {
-                            alert('🎉 Congratulations! You are now a VIP member!');
-                            window.location.reload();
-                          } else {
-                            alert(`You need ${VIP_COST} coins to redeem VIP. Keep reading!`);
-                          }
-                        }}
-                      >
-                        <Crown size={14} />
-                        Redeem VIP ({VIP_COST} coins)
-                      </button>
-                    ) : (
-                      <span className="vip-active-badge">
-                        <Crown size={14} />
-                        VIP Active
-                      </span>
-                    )}
-                  </div>
-                </div>
-              );
-            })()}
 
             <div className="action-buttons">
               {book.chaptersList.length > 0 ? (
@@ -346,6 +281,81 @@ export default function BookDetail() {
             </div>
             <p className="synopsis-text">{book.synopsis}</p>
           </div>
+
+          {/* Reading Progress & Rewards — now full-width in detail-body */}
+          {book.chaptersList.length > 0 && (() => {
+            const progress = getReadingProgress(userId, bookId, book.chaptersList.length);
+            const claimed = getClaimedMilestones(userId, bookId);
+            const coins = getCoins(userId);
+            const vipStatus = isVIP(userId);
+
+            return (
+              <div className="reading-progress-section glass-panel">
+                {/* VIP Exchange */}
+                <div className="vip-exchange">
+                  <div className="vip-exchange-info">
+                    <Crown size={16} className="vip-crown" />
+                    <span>Your Balance: <strong className="coin-highlight">{coins} coins</strong></span>
+                  </div>
+                  {!vipStatus ? (
+                    <button
+                      className={`vip-redeem-btn ${coins >= VIP_COST ? '' : 'disabled'}`}
+                      onClick={() => {
+                        if (redeemVIP(userId)) {
+                          alert('🎉 Congratulations! You are now a VIP member!');
+                          window.location.reload();
+                        } else {
+                          alert(`You need ${VIP_COST} coins to redeem VIP. Keep reading!`);
+                        }
+                      }}
+                    >
+                      <Crown size={14} />
+                      Redeem VIP ({VIP_COST} coins)
+                    </button>
+                  ) : (
+                    <span className="vip-active-badge">
+                      <Crown size={14} />
+                      VIP Active
+                    </span>
+                  )}
+                </div>
+
+                <div className="progress-header">
+                  <Award size={18} className="progress-icon" />
+                  <span className="progress-title">Reading Progress</span>
+                  <span className="progress-percent">{progress}%</span>
+                </div>
+
+                <div className="progress-bar-container">
+                  <div className="progress-bar-bg">
+                    <div className="progress-bar-fill" style={{ width: `${progress}%` }} />
+                  </div>
+                </div>
+
+                <div className="milestones-grid">
+                  {MILESTONES.map((m) => {
+                    const isClaimed = claimed.includes(m.percent);
+                    const isReached = progress >= m.percent;
+                    return (
+                      <div
+                        key={m.percent}
+                        className={`milestone-item ${isClaimed ? 'claimed' : ''} ${isReached && !isClaimed ? 'reached' : ''} ${!isReached ? 'locked' : ''}`}
+                      >
+                        <div className="milestone-badge">
+                          {isClaimed ? '✓' : `${m.percent}%`}
+                        </div>
+                        <span className="milestone-label">{m.label.split('—')[1]?.trim()}</span>
+                        <div className="milestone-reward">
+                          <Coins size={12} />
+                          <span>{m.coins}</span>
+                        </div>
+                      </div>
+                    );
+                  })}
+                </div>
+              </div>
+            );
+          })()}
 
           <div className="chapters-section">
             <div className="chapters-header">

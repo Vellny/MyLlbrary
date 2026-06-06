@@ -14,7 +14,7 @@ import './CreateBook.css';
 const AVAILABLE_GENRES = [
   'Fantasy', 'Romance', 'Sci-Fi', 'Mystery', 'Thriller', 
   'Horror', 'Adventure', 'LGBTQ+', 'Slice of Life', 
-  'School Life', 'Action', 'Comedy', 'Drama'
+  'School Life', 'Action', 'Comedy', 'Drama', 'GL', 'BL'
 ];
 
 const GENRE_COVERS: Record<string, string> = {
@@ -54,6 +54,17 @@ export default function CreateBook() {
       setSelectedGenres(selectedGenres.filter(g => g !== genre));
     } else {
       setSelectedGenres([...selectedGenres, genre]);
+    }
+  };
+
+  const handleCoverUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (file) {
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        setCoverUrl(reader.result as string);
+      };
+      reader.readAsDataURL(file);
     }
   };
 
@@ -279,15 +290,28 @@ export default function CreateBook() {
 
               <div className="form-group" style={{ animation: 'fadeIn 0.3s ease' }}>
                 <label className="form-label">
-                  📷 Custom Cover Image URL (Optional)
+                  📷 Custom Cover Image (Optional)
                 </label>
-                <input 
-                  type="text" 
-                  value={coverUrl}
-                  onChange={(e) => setCoverUrl(e.target.value)}
-                  placeholder="Paste cover URL (or leave blank for procedural AI art)..." 
-                  className="form-input ai-prompt-input"
-                />
+                <div 
+                  className="cover-upload-dropzone" 
+                  onClick={() => document.getElementById('ai-cover-upload')?.click()}
+                >
+                  {coverUrl ? (
+                    <img src={coverUrl} alt="Cover Preview" className="cover-upload-preview" />
+                  ) : (
+                    <div className="upload-placeholder">
+                      <span className="upload-icon">📁</span>
+                      <p>Click to browse image (or leave blank for AI art)</p>
+                    </div>
+                  )}
+                  <input 
+                    type="file" 
+                    id="ai-cover-upload" 
+                    style={{ display: 'none' }} 
+                    accept="image/*"
+                    onChange={handleCoverUpload}
+                  />
+                </div>
               </div>
 
               {/* Gemini API Key Settings Subpanel */}
@@ -371,15 +395,28 @@ export default function CreateBook() {
 
               <div className="form-group">
                 <label className="form-label">
-                  📷 Custom Cover Image URL (Optional)
+                  📷 Custom Cover Image (Optional)
                 </label>
-                <input 
-                  type="text" 
-                  value={coverUrl}
-                  onChange={(e) => setCoverUrl(e.target.value)}
-                  placeholder="https://images.unsplash.com/... or paste image URL" 
-                  className="form-input"
-                />
+                <div 
+                  className="cover-upload-dropzone" 
+                  onClick={() => document.getElementById('manual-cover-upload')?.click()}
+                >
+                  {coverUrl ? (
+                    <img src={coverUrl} alt="Cover Preview" className="cover-upload-preview" />
+                  ) : (
+                    <div className="upload-placeholder">
+                      <span className="upload-icon">📁</span>
+                      <p>Click to browse and upload cover image</p>
+                    </div>
+                  )}
+                  <input 
+                    type="file" 
+                    id="manual-cover-upload" 
+                    style={{ display: 'none' }} 
+                    accept="image/*"
+                    onChange={handleCoverUpload}
+                  />
+                </div>
               </div>
             </>
           )}

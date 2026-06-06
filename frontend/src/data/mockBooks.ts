@@ -20,6 +20,7 @@ export const mockTrendingBooks: BookSummary[] = [
 ];
 
 export const mockCategories = ['All', 'Romance', 'Fantasy', 'Sci-Fi', 'Mystery', 'Thriller', 'Horror'];
+export const extendedCategories = ['Adventure', 'LGBTQ+', 'Slice of Life', 'School Life', 'Action', 'Comedy', 'Drama', 'GL', 'BL'];
 
 export const mockBooksDict: Record<string, Book> = {
   '1': {

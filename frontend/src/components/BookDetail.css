@@ -179,6 +179,12 @@
   border: 1px solid rgba(245, 158, 11, 0.15);
 }
 
+/* When inside detail-body grid, span full width */
+.detail-body .reading-progress-section {
+  grid-column: 1 / -1;
+  margin-bottom: 0;
+}
+
 .progress-header {
   display: flex;
   align-items: center;
@@ -243,7 +249,14 @@
   display: grid;
   grid-template-columns: repeat(4, 1fr);
   gap: 0.5rem;
-  margin-bottom: 1rem;
+  margin-bottom: 0;
+}
+
+@media (min-width: 768px) {
+  .detail-body .milestones-grid {
+    grid-template-columns: repeat(4, 1fr);
+    gap: 1rem;
+  }
 }
 
 .milestone-item {
@@ -320,8 +333,9 @@
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding-top: 0.75rem;
-  border-top: 1px solid rgba(255, 255, 255, 0.06);
+  padding-bottom: 0.75rem;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+  margin-bottom: 1rem;
 }
 
 .vip-exchange-info {

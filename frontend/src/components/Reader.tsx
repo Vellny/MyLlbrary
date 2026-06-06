@@ -4,12 +4,15 @@ import { Menu, X, Award, Coins } from 'lucide-react';
 import { bookTitles, isUserAuthoredBook, mockBooksDict } from '../data/mockBooks';
 import { allChaptersContent } from '../data/mockChapters';
 import { markChapterRead, checkAndClaimMilestones, getReadChapters } from '../services/rewards';
+import { useAuth } from '../context/useAuth';
 import type { Book, ChapterListItem } from '../types';
 import './Reader.css';
 
 export default function Reader() {
   const { chapterId } = useParams();
   const navigate = useNavigate();
+  const { user } = useAuth();
+  const userId = user?.id ?? 'guest';
   const [showControls, setShowControls] = useState(true);
   const [isDrawerOpen, setIsDrawerOpen] = useState(false);
 
@@ -120,16 +123,34 @@ export default function Reader() {
     return bookTitles[bookId] || 'The Starlight Heir';
   })();
 
+  const bookCoverResolved = (() => {
+    if (isUserAuthoredBook(bookId)) {
+      try {
+        const saved = localStorage.getItem('user_authored_books');
+        if (saved) {
+          const userBooks: Book[] = JSON.parse(saved);
+          const found = userBooks.find((b) => b.id === bookId);
+          if (found && found.coverUrl) return found.coverUrl;
+        }
+      } catch (err) {
+        // ignore
+      }
+    }
+    const mockBook = mockBooksDict[bookId];
+    if (mockBook && mockBook.coverUrl) return mockBook.coverUrl;
+    return 'https://images.unsplash.com/photo-1614729939124-032f0b56c9ce?auto=format&fit=crop&q=80&w=800'; // Default cover
+  })();
+
   // Mark chapter as read and check milestones
   const markAndReward = useCallback(() => {
-    markChapterRead(bookId, contentKey);
-    const newMilestones = checkAndClaimMilestones(bookId, totalChapters);
+    markChapterRead(userId, bookId, contentKey);
+    const newMilestones = checkAndClaimMilestones(userId, bookId, totalChapters);
     if (newMilestones.length > 0) {
       const latest = newMilestones[newMilestones.length - 1];
       setRewardNotification({ coins: latest.coins, label: latest.label });
       setTimeout(() => setRewardNotification(null), 5000);
     }
-  }, [bookId, contentKey, totalChapters]);
+  }, [userId, bookId, contentKey, totalChapters]);
 
   // Auto-mark chapter as read when opening it and scroll to top
   useEffect(() => {
@@ -138,7 +159,7 @@ export default function Reader() {
   }, [markAndReward]);
 
   // Get read chapters for drawer display
-  const readChaptersSet = new Set(getReadChapters(bookId));
+  const readChaptersSet = new Set(getReadChapters(userId, bookId));
 
   // Calculate reading progress
   const progressPercent = totalChapters > 0 ? Math.round((readChaptersSet.size / totalChapters) * 100) : 0;
@@ -204,10 +225,19 @@ export default function Reader() {
       {/* Chapters Side Drawer (Hamburger Menu) */}
       <div className={`chapters-drawer glass-panel ${isDrawerOpen ? 'open' : ''}`} onClick={e => e.stopPropagation()}>
         <div className="drawer-header">
-          <h3 className="drawer-title text-gradient">{bookTitleResolved}</h3>
+          <h3 className="drawer-title text-gradient">Chapters</h3>
           <button className="drawer-close-btn" onClick={() => setIsDrawerOpen(false)}>
             <X size={20} />
           </button>
+        </div>
+
+        {/* Back to Book Cover Link */}
+        <div className="drawer-book-link" onClick={() => navigate(`/book/${bookId}`)}>
+          <img src={bookCoverResolved} alt="Book Cover" className="drawer-book-cover" />
+          <div className="drawer-book-details">
+            <span className="drawer-book-title">{bookTitleResolved}</span>
+            <span className="drawer-book-action">← Back to Synopsis</span>
+          </div>
         </div>
 
         {/* Progress in Drawer */}

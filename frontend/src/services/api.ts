@@ -48,16 +48,14 @@ export interface UpdateChapterPayload {
 // ─── Auth ──────────────────────────────────────────────
 
 export const getCsrfCookie = () =>
-  api.get('/sanctum/csrf-cookie');
+  Promise.resolve();
 
 export const login = async (payload: LoginPayload) => {
-  await getCsrfCookie();
   const { data } = await api.post('/api/login', payload);
   return data;
 };
 
 export const register = async (payload: RegisterPayload) => {
-  await getCsrfCookie();
   const { data } = await api.post('/api/register', payload);
   return data;
 };

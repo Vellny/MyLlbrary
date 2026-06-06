@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/useAuth';
 import api from '../api';
+import { getPremiumLevel, isVIP } from '../services/rewards';
 import { 
   User as UserIcon, 
   Award, 
@@ -17,14 +18,6 @@ import {
 } from 'lucide-react';
 import './ProfilePage.css';
 
-const PRESETS = [
-  { name: 'Scholar', url: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&q=80&w=200' },
-  { name: 'Mysterious Knight', url: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&q=80&w=200' },
-  { name: 'Cosmic Explorer', url: 'https://images.unsplash.com/photo-1500648767791-00dcc994a43e?auto=format&fit=crop&q=80&w=200' },
-  { name: 'Fantasy Wizard', url: 'https://images.unsplash.com/photo-1494790108377-be9c29b29330?auto=format&fit=crop&q=80&w=200' },
-  { name: 'Ancient Sage', url: 'https://images.unsplash.com/photo-1522075469751-3a6694fb2f61?auto=format&fit=crop&q=80&w=200' },
-  { name: 'Dreamer', url: 'https://images.unsplash.com/photo-1544005313-94ddf0286df2?auto=format&fit=crop&q=80&w=200' },
-];
 
 export default function ProfilePage() {
   const { user, logout, loading, updateUser } = useAuth();
@@ -36,9 +29,7 @@ export default function ProfilePage() {
   const [isEditing, setIsEditing] = useState(false);
   const [saveStatus, setSaveStatus] = useState<string | null>(null);
 
-  // Avatar Picker states
   const [showAvatarPicker, setShowAvatarPicker] = useState(false);
-  const [customAvatarUrl, setCustomAvatarUrl] = useState('');
 
   useEffect(() => {
     if (!loading && !user) {
@@ -84,8 +75,14 @@ export default function ProfilePage() {
   const handleSelectAvatar = async (url: string) => {
     setSaveStatus('saving');
     try {
-      const response = await api.post('/api/user/update', { name: user.name, avatar: url });
-      updateUser(response.data.user);
+      // Save large base64 image string to localStorage
+      localStorage.setItem(`user_avatar_${user.id}`, url);
+      
+      // Still update name in backend to keep sync, but omit avatar to prevent 413 Payload Too Large
+      const response = await api.post('/api/user/update', { name: user.name });
+      
+      const updatedUser = { ...response.data.user, avatar: url };
+      updateUser(updatedUser);
       setSaveStatus('success');
       setShowAvatarPicker(false);
       setTimeout(() => setSaveStatus(null), 3000);
@@ -95,10 +92,14 @@ export default function ProfilePage() {
     }
   };
 
-  const handleCustomAvatarSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    if (customAvatarUrl.trim()) {
-      handleSelectAvatar(customAvatarUrl.trim());
+  const handleAvatarUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (file) {
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        handleSelectAvatar(reader.result as string);
+      };
+      reader.readAsDataURL(file);
     }
   };
 
@@ -125,7 +126,7 @@ export default function ProfilePage() {
         <div className="profile-user-info">
           <h1 className="profile-user-name">
             {user.name}
-            <span className="profile-member-badge">VIP Member</span>
+            {isVIP(user.id) && <span className="profile-member-badge">VIP Member</span>}
           </h1>
           <p className="profile-user-email">{user.email}</p>
         </div>
@@ -225,7 +226,7 @@ export default function ProfilePage() {
                 <span style={{ color: 'var(--text-secondary)', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
                   <Sparkles size={16} /> Premium Level
                 </span>
-                <span className="text-gradient" style={{ fontWeight: 'bold' }}>Level 5 (Scholar)</span>
+                <span className="text-gradient" style={{ fontWeight: 'bold' }}>Level {getPremiumLevel(user.id).level} ({getPremiumLevel(user.id).title})</span>
               </div>
             </div>
             <button onClick={logout} className="profile-btn-logout" style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '0.5rem', marginTop: '1rem' }}>
@@ -328,78 +329,45 @@ export default function ProfilePage() {
 
             <div>
               <p style={{ margin: '0 0 1rem 0', fontSize: '0.9rem', color: 'var(--text-secondary)' }}>
-                Select a beautiful preset avatar or enter a custom image URL:
+                Upload a new profile photo from your device.
               </p>
               
-              {/* Preset Grid */}
-              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '1rem', marginBottom: '1.5rem' }}>
-                {PRESETS.map((preset) => (
-                  <button
-                    key={preset.name}
-                    onClick={() => handleSelectAvatar(preset.url)}
-                    style={{
-                      background: 'none',
-                      border: 'none',
-                      padding: 0,
-                      cursor: 'pointer',
-                      display: 'flex',
-                      flexDirection: 'column',
-                      alignItems: 'center',
-                      gap: '0.4rem',
-                      transition: 'transform 0.2s'
-                    }}
-                    onMouseEnter={(e) => (e.currentTarget.style.transform = 'scale(1.05)')}
-                    onMouseLeave={(e) => (e.currentTarget.style.transform = 'none')}
-                  >
-                    <img 
-                      src={preset.url} 
-                      alt={preset.name} 
-                      style={{ 
-                        width: '70px', 
-                        height: '70px', 
-                        borderRadius: '50%', 
-                        objectFit: 'cover', 
-                        border: user.avatar === preset.url ? '3px solid var(--accent-primary)' : '2px solid rgba(255, 255, 255, 0.1)',
-                        boxShadow: '0 4px 10px rgba(0,0,0,0.2)'
-                      }} 
-                    />
-                    <span style={{ fontSize: '0.75rem', color: 'var(--text-secondary)', fontWeight: 500 }}>
-                      {preset.name}
-                    </span>
-                  </button>
-                ))}
+              <div 
+                onClick={() => document.getElementById('profile-avatar-upload')?.click()}
+                style={{
+                  width: '100%',
+                  minHeight: '160px',
+                  border: '2px dashed rgba(255, 255, 255, 0.2)',
+                  borderRadius: '12px',
+                  display: 'flex',
+                  flexDirection: 'column',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  gap: '0.5rem',
+                  cursor: 'pointer',
+                  background: 'rgba(255, 255, 255, 0.02)',
+                  transition: 'all 0.3s ease',
+                  padding: '2rem 1rem'
+                }}
+                onMouseEnter={(e) => {
+                  e.currentTarget.style.borderColor = 'var(--accent-primary)';
+                  e.currentTarget.style.background = 'rgba(244, 63, 94, 0.05)';
+                }}
+                onMouseLeave={(e) => {
+                  e.currentTarget.style.borderColor = 'rgba(255, 255, 255, 0.2)';
+                  e.currentTarget.style.background = 'rgba(255, 255, 255, 0.02)';
+                }}
+              >
+                <span style={{ fontSize: '2.5rem', opacity: 0.8 }}>📁</span>
+                <p style={{ color: 'var(--text-secondary)', margin: 0, textAlign: 'center' }}>Click to browse and upload image</p>
+                <input 
+                  type="file" 
+                  id="profile-avatar-upload" 
+                  style={{ display: 'none' }} 
+                  accept="image/*"
+                  onChange={handleAvatarUpload}
+                />
               </div>
-
-              {/* Custom URL Input Form */}
-              <form onSubmit={handleCustomAvatarSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '0.75rem', borderTop: '1px solid rgba(255, 255, 255, 0.1)', paddingTop: '1.25rem' }}>
-                <label style={{ fontSize: '0.85rem', fontWeight: 600, color: 'var(--text-secondary)' }}>
-                  Or enter a custom image URL:
-                </label>
-                <div style={{ display: 'flex', gap: '0.5rem' }}>
-                  <input
-                    type="url"
-                    value={customAvatarUrl}
-                    onChange={(e) => setCustomAvatarUrl(e.target.value)}
-                    placeholder="https://example.com/avatar.jpg"
-                    style={{
-                      flex: 1,
-                      background: 'var(--bg-surface)',
-                      border: '1px solid var(--bg-glass-border)',
-                      color: 'var(--text-primary)',
-                      padding: '0.5rem 0.75rem',
-                      borderRadius: '6px',
-                      fontSize: '0.85rem'
-                    }}
-                  />
-                  <button 
-                    type="submit"
-                    className="profile-btn-primary"
-                    style={{ padding: '0.5rem 1rem', alignSelf: 'stretch', fontSize: '0.85rem', whiteSpace: 'nowrap' }}
-                  >
-                    Apply URL
-                  </button>
-                </div>
-              </form>
             </div>
           </div>
         </div>

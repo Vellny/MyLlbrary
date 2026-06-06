@@ -1,7 +1,7 @@
 import { useState, useMemo, useRef, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { Search, X, BookOpen, TrendingUp, Sparkles } from 'lucide-react';
-import { mockFeaturedBook, mockTrendingBooks, mockCategories, mockBooksDict } from '../data/mockBooks';
+import { mockFeaturedBook, mockTrendingBooks, mockCategories, extendedCategories, mockBooksDict } from '../data/mockBooks';
 import type { Book, BookSummary } from '../types';
 import './Discover.css';
 
@@ -68,6 +68,7 @@ export default function Discover() {
     userBooks.length > 0 ? [...userBooks, ...[...mockTrendingBooks].reverse()] : [...mockTrendingBooks].reverse()
   );
   const [activeCategory, setActiveCategory] = useState('All');
+  const [showAllCategories, setShowAllCategories] = useState(false);
 
   // Search state
   const [searchQuery, setSearchQuery] = useState('');
@@ -240,6 +241,22 @@ export default function Discover() {
               {category}
             </button>
           ))}
+          {showAllCategories && extendedCategories.map((category) => (
+            <button
+              key={category}
+              className={`category-pill ${activeCategory === category ? 'active' : ''}`}
+              onClick={() => setActiveCategory(category)}
+            >
+              {category}
+            </button>
+          ))}
+          <button
+            className="category-pill see-all-btn"
+            onClick={() => setShowAllCategories(!showAllCategories)}
+            style={{ fontWeight: 700, color: 'var(--accent-primary)', border: '1px solid rgba(244, 63, 94, 0.3)' }}
+          >
+            {showAllCategories ? 'Show Less' : 'See All'}
+          </button>
         </div>
       </section>
 
