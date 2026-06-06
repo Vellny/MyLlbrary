@@ -26,6 +26,7 @@ export interface Book {
   id: string;
   title: string;
   author: string;
+  authorId?: number | string;
   synopsis: string;
   coverImage: string;
   tags: string[];

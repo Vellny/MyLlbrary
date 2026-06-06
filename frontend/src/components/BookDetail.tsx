@@ -205,7 +205,12 @@ export default function BookDetail() {
 
   const isUserBook = isUserAuthoredBook(bookId);
   const isCollaborativeBook = !!book.isCollaborative;
-  const canAddChapters = isUserBook || isCollaborativeBook;
+
+  // Ownership check: only the original author can edit/delete their own novel
+  const isOwner = isUserBook && book.authorId !== undefined && String(book.authorId) === String(userId);
+  
+  // Collaborative books allow any logged-in user to add chapters
+  const canAddChapters = isOwner || isCollaborativeBook;
 
   return (
     <div className="book-detail-page">
@@ -262,7 +267,7 @@ export default function BookDetail() {
               <button className="secondary-btn glass-panel">
                 <span className="nav-icon">➕</span> Add to Library
               </button>
-              {isUserBook && (
+              {isOwner && (
                 <button onClick={handleDeleteBook} className="delete-btn glass-panel">
                   <span className="nav-icon">🗑️</span> Delete Novel
                 </button>

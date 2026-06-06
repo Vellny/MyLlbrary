@@ -210,6 +210,7 @@ export default function CreateBook() {
       id: newBookId,
       title: novelTitle,
       author: user?.name || 'Local Author',
+      authorId: user?.id ?? 'guest',
       synopsis: novelSynopsis,
       coverImage: coverImage,
       tags: selectedGenres.length > 0 ? selectedGenres : ['Fantasy', 'Adventure'],
