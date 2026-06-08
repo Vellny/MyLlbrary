@@ -71,15 +71,12 @@ export default function Navigation() {
         {/* Navigation Links */}
         <div className="nav-links">
           <Link to="/" className={`nav-item ${location.pathname === '/' ? 'active' : ''}`}>
-            <span className="nav-icon">🧭</span>
             <span className="nav-text">Discover</span>
           </Link>
           <Link to="/create-novel" className={`nav-item ${location.pathname === '/create-novel' ? 'active' : ''}`}>
-            <span className="nav-icon">✍️</span>
             <span className="nav-text">Write</span>
           </Link>
           <Link to="/bookshelf" className={`nav-item ${location.pathname === '/bookshelf' ? 'active' : ''}`}>
-            <span className="nav-icon">📚</span>
             <span className="nav-text">Bookshelf</span>
           </Link>
 
